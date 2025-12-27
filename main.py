@@ -28,8 +28,9 @@ def main():
         },
     ]
 
-    response: DialogResponse = eleven_labs_client.get_dialog(inputs)
-    write_audio(response)
+    response = eleven_labs_client.get_dialog(inputs)
+    if response is DialogResponse:
+        write_audio(response)
 
 
 if __name__ == "__main__":

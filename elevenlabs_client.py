@@ -1,5 +1,6 @@
 import base64
 import os
+import binascii
 from dataclasses import dataclass
 from typing import Dict, List
 
@@ -34,7 +35,7 @@ class ElevenLabsClient:
     def str_to_bytes(data: str) -> bytes:
         return base64.b64decode(data)
 
-    def get_dialog(self, dialog: List[Dict[str, str]]) -> DialogResponse:
+    def get_dialog(self, dialog: List[Dict[str, str]]) -> DialogResponse | ValueError:
         dialog_input_sequence = [
             DialogueInput(text=line["text"], voice_id=line["voice_id"])
             for line in dialog
@@ -54,7 +55,10 @@ class ElevenLabsClient:
             inputs=dialog_input_sequence,
         )
 
-        audio_data = ElevenLabsClient.str_to_bytes(result.audio_base_64)
+        try:
+            audio_data = ElevenLabsClient.str_to_bytes(result.audio_base_64)
+        except ValueError as error:
+            return error
 
         return DialogResponse(
             audio_data=audio_data,
