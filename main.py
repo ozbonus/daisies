@@ -1,5 +1,6 @@
 from pathlib import Path
-from elevenlabs_client import ElevenLabsClient, DialogResponse
+from elevenlabs_client import eleven_labs_client, DialogResponse
+
 
 
 def write_audio(
@@ -27,8 +28,7 @@ def main():
         },
     ]
 
-    client = ElevenLabsClient()
-    response: DialogResponse = client.get_dialog(inputs)
+    response: DialogResponse = eleven_labs_client.get_dialog(inputs)
     write_audio(response)
 
 

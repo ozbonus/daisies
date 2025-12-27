@@ -8,7 +8,6 @@ from elevenlabs import DialogueInput
 from elevenlabs.client import ElevenLabs
 from elevenlabs.types import ModelSettingsResponseModel, VoiceSegment
 
-
 @dataclass
 class DialogResponse:
     """
@@ -61,3 +60,5 @@ class ElevenLabsClient:
             audio_data=audio_data,
             segments=result.voice_segments,
         )
+
+eleven_labs_client = ElevenLabsClient()
