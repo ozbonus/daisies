@@ -1,5 +1,6 @@
 from pathlib import Path
 from elevenlabs_client import eleven_labs_client, DialogResponse
+from errors import ElevenLabsClientError
 
 
 
@@ -31,6 +32,8 @@ def main():
     response = eleven_labs_client.get_dialog(inputs)
     if response is DialogResponse:
         write_audio(response)
+    if response is Exception:
+        print(response.msg)
 
 
 if __name__ == "__main__":
