@@ -25,12 +25,8 @@ class ElevenLabsClient:
     A wrapper for ElevenLabs text-to-dialog API.
     """
 
-    def __init__(self):
-        load_dotenv()
-        self.client = ElevenLabs(
-            base_url="https://api.elevenlabs.io",
-            api_key=os.getenv("API_KEY"),
-        )
+    def __init__(self, client: ElevenLabs):
+        self.client = client
 
     @staticmethod
     def str_to_bytes(data: str) -> bytes:
@@ -80,4 +76,9 @@ class ElevenLabsClient:
         )
 
 
-eleven_labs_client = ElevenLabsClient()
+load_dotenv()
+client = ElevenLabs(
+    base_url="https://api.elevenlabs.io",
+    api_key=os.getenv("API_KEY"),
+)
+eleven_labs_client = ElevenLabsClient(client=client)
