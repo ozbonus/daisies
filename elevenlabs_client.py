@@ -51,7 +51,7 @@ class ElevenLabsClient:
                 output_format="mp3_44100_128",
                 language_code="en",
                 pronunciation_dictionary_locators=[],
-                apply_text_normalization="autoxxxxxx",
+                apply_text_normalization="auto",
                 inputs=dialog_input_sequence,
             )
         except UnprocessableEntityError as error:

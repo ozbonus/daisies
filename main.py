@@ -30,9 +30,9 @@ def main():
     ]
 
     response = eleven_labs_client.get_dialog(inputs)
-    if response is DialogResponse:
-        write_audio(response)
-    if response is Exception:
+    if isinstance(response, DialogResponse):
+        print(response.segments)
+    if isinstance(response, ElevenLabsClientError):
         print(response.msg)
 
 
