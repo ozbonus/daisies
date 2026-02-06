@@ -7,3 +7,9 @@ class ElevenLabsClientError(Exception):
     def __init__(self, msg: str):
         self.msg = msg
         super().__init__(msg)
+
+
+class ScriptError(ValueError):
+    def __init__(self, msg: str):
+        self.msg = f"Script Error: {msg}"
+        super().__init__(msg)
