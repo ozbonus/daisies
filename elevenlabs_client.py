@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from elevenlabs import DialogueInput, UnprocessableEntityError
 from elevenlabs.client import ElevenLabs
 from elevenlabs.types import ModelSettingsResponseModel, VoiceSegment
-from errors import Base64DecodeError, ElevenLabsClientError
+from errors import Base64DecodeError, ElevenLabsClientError, ScriptError
 
 
 @dataclass
@@ -28,21 +28,26 @@ class ElevenLabsClient:
     def __init__(self, client: ElevenLabs):
         self.client = client
 
-    @staticmethod
-    def str_to_bytes(data: str) -> bytes:
+    def _str_to_bytes(self, data: str) -> bytes:
         return base64.b64decode(data)
 
-    def get_dialog(
-        self, dialog: List[Dict[str, str]]
-    ) -> DialogResponse | Base64DecodeError | ElevenLabsClientError:
-        dialog_input_sequence = [
-            DialogueInput(text=line["text"], voice_id=line["voice_id"])
-            for line in dialog
-        ]
+    def _make_input_sequence(self, script: List[Dict[str, str]]) -> List[DialogueInput]:
+        try:
+            inputs = []
+            for line in script:
+                text = line["text"]
+                voice_id = line["voice_id"]
+                input = DialogueInput(text=text, voice_id=voice_id)
+                inputs.append(input)
+            return inputs
+        except KeyError as error:
+            missing_key: str = error.args[0]
+            raise ScriptError(msg=f"Missing the required key {missing_key}")
 
-        settings = ModelSettingsResponseModel(
-            stability=0.5,
-        )
+    def get_dialog(self, script: List[Dict[str, str]]) -> DialogResponse:
+        dialog_input_sequence = self._make_input_sequence(script)
+
+        settings = ModelSettingsResponseModel(stability=0.5)
 
         try:
             result = self.client.text_to_dialogue.convert_with_timestamps(
@@ -59,16 +64,16 @@ class ElevenLabsClient:
                 error_message = error.body.detail[0].msg
                 error_location = error.body.detail[0].loc
                 msg = f"API error at {error_location}: {error_message}"
-                return ElevenLabsClientError(msg=msg)
+                raise ElevenLabsClientError(msg=msg)
             else:
-                return ElevenLabsClientError(msg="Unspecified API client error")
+                raise ElevenLabsClientError(msg="Unspecified API client error")
         except Exception:
-            return ElevenLabsClientError(msg="Unhandled API client error")
+            raise ElevenLabsClientError(msg="Unhandled API client error")
 
         try:
-            audio_data = ElevenLabsClient.str_to_bytes(result.audio_base_64)
+            audio_data = self._str_to_bytes(result.audio_base_64)
         except ValueError:
-            return Base64DecodeError()
+            raise Base64DecodeError()
 
         return DialogResponse(
             audio_data=audio_data,

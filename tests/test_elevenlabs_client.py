@@ -1,12 +1,55 @@
-from typing import List
 import pytest
 from elevenlabs_client import ElevenLabsClient, DialogResponse
 from elevenlabs import DialogueInput, UnprocessableEntityError, VoiceSegment
 from elevenlabs.types import ModelSettingsResponseModel
-from errors import Base64DecodeError, ElevenLabsClientError
+from errors import Base64DecodeError, ElevenLabsClientError, ScriptError
 
 
+class TestElevenLabsClientMakeInputSequenceSuccess:
+    """
+    Test the method for generating an input sequence from a script.
+    """
 
+    @pytest.fixture(autouse=True)
+    def setup(self, mock_elevenlabs_happy, sample_script):
+        self.client = ElevenLabsClient(mock_elevenlabs_happy)
+        self.result = self.client._make_input_sequence(sample_script)
+
+    def test_is_list(self):
+        assert isinstance(self.result, list)
+
+    def test_elements_are_dialog_input(self):
+        assert all(isinstance(i, DialogueInput) for i in self.result)
+
+    def test_values(self):
+        assert self.result[0].text == "[happily] How are you?"
+        assert self.result[0].voice_id == "abc123"
+        assert self.result[1].text == "[whispering] Fine, thank you."
+        assert self.result[1].voice_id == "def456"
+
+
+class TestElevenLabsClientMakeInputSequenceErrors:
+    """
+    Test `_make_input_sequence` with various faulty inputs.
+    """
+
+    @pytest.fixture(autouse=True)
+    def setup(self, mock_elevenlabs_happy):
+        self.client = ElevenLabsClient(mock_elevenlabs_happy)
+
+    @pytest.mark.parametrize(
+        "script, expected_key",
+        [
+            ([{"bad_key": "blah", "voice_id": "blah"}], "text"),  # Bad key.
+            ([{"voice_id": "blah"}], "text"),  # Missing key.
+            ([{"text": "blah"}], "voice_id"),  # Missing key.
+            ([{}], "text"),  # Missing all keys.
+        ],
+    )
+    def test_raise_script_error(self, script, expected_key):
+        with pytest.raises(ScriptError) as exception:
+            self.client._make_input_sequence(script)
+        assert expected_key in str(exception.value.msg)
 
 
 class TestElevenLabsClientGetDialogSuccess:
@@ -17,94 +60,66 @@ class TestElevenLabsClientGetDialogSuccess:
     @pytest.fixture(autouse=True)
     def setup(self, mock_elevenlabs_happy, sample_script):
         self.client = ElevenLabsClient(mock_elevenlabs_happy)
-        result = self.client.get_dialog(sample_script)
-        assert isinstance(result, DialogResponse), (
-            f"Expected DialogResponse, got {type(result)}"
-        )
-        self.result: DialogResponse = result
+        self.result = self.client.get_dialog(sample_script)
+        self.mock = mock_elevenlabs_happy
 
-    def test_method_called(self, mock_elevenlabs_happy):
-        mock_elevenlabs_happy.text_to_dialogue.convert_with_timestamps.assert_called_once()
-
-    def test_response_type(self):
-        assert isinstance(self.result, DialogResponse), (
-            f"Expected DialogResponse, got {type(self.result)}"
+    def test_api_called_with_correct_parameters(self):
+        """Verify the API receives the expected configuration."""
+        call_kwargs = (
+            self.mock.text_to_dialogue.convert_with_timestamps.call_args.kwargs
         )
 
-    def test_segments_length(self):
-        assert len(self.result.segments) == 2
+        # Verify API endpoint parameters.
+        assert call_kwargs["model_id"] == "eleven_v3"
+        assert call_kwargs["output_format"] == "mp3_44100_128"
+        assert call_kwargs["language_code"] == "en"
+        assert call_kwargs["apply_text_normalization"] == "auto"
+        assert call_kwargs["pronunciation_dictionary_locators"] == []
 
-    def test_segments_is_list(self):
-        assert isinstance(self.result.segments, List)
+        # Verify model settings.
+        settings = call_kwargs["settings"]
+        assert isinstance(settings, ModelSettingsResponseModel)
+        assert settings.stability == 0.5
 
-    def test_segments_are_voice_segments(self):
-        assert all(isinstance(i, VoiceSegment) for i in self.result.segments)
+        # Verify input transformation.
+        inputs = call_kwargs["inputs"]
+        assert len(inputs) == 2
+        assert all(isinstance(i, DialogueInput) for i in inputs)
+        assert inputs[0].text == "[happily] How are you?"
+        assert inputs[0].voice_id == "abc123"
+        assert inputs[1].text == "[whispering] Fine, thank you."
+        assert inputs[1].voice_id == "def456"
+
+    def test_api_is_called(self):
+        """Verify that the API method was called once."""
+        self.mock.text_to_dialogue.convert_with_timestamps.assert_called_once()
+
+    def test_return_dialog_response(self):
+        """Verify that the response is the correct type."""
+        assert isinstance(self.result, DialogResponse)
+
+    def test_audio_data_validity(self):
+        """Verify that the audio data is the correct type."""
+        assert isinstance(self.result.audio_data, bytes)
 
     def test_segments_structure(self):
+        """Verify the structure and contents of the audio segments."""
+        segments = self.result.segments
+
+        # Test overall structure of the segments.
+        assert isinstance(segments, list)
+        assert len(segments) == 2
+        assert all(isinstance(i, VoiceSegment) for i in segments)
+
+        # Test the contents of each segment.
         assert self.result.segments[0].voice_id == "abc123"
         assert self.result.segments[0].start_time_seconds == 0.0
         assert self.result.segments[0].end_time_seconds == 1.0
         assert self.result.segments[1].voice_id == "def456"
         assert self.result.segments[1].start_time_seconds == 1.0
         assert self.result.segments[1].end_time_seconds == 2.0
-
-    def test_audio_data_exists(self):
-        assert len(self.result.audio_data) > 0
-
-    def test_audio_data_is_bytes(self):
-        assert isinstance(self.result.audio_data, bytes)
-
-
-class TestElevenLabsClient:
-    """
-    Tests for the ElevenLabs client API wrapper.
-    """
-
-    def test_get_dialog_success(self, mock_elevenlabs_happy, sample_script):
-        """Test successful dialogue generation with valid inputs."""
-        client = ElevenLabsClient(mock_elevenlabs_happy)
-        result = client.get_dialog(sample_script)
-
-        # Assert the mock was called correctly.
-        mock_elevenlabs_happy.text_to_dialogue.convert_with_timestamps.assert_called_once()
-
-        # Assert result type and structure.
-        assert isinstance(result, DialogResponse), (
-            f"Expected DialogResponse, got {type(result)}"
-        )
-        assert not isinstance(result, (Base64DecodeError, ElevenLabsClientError))
-
-        # Assert - verify audio data is correctly decoded
-        assert isinstance(result.audio_data, bytes)
-        assert len(result.audio_data) > 0
-
-        # Assert - verify segments structure
-        assert len(result.segments) == 2
-        assert result.segments[0].voice_id == "abc123"
-        assert result.segments[0].start_time_seconds == 0.0
-        assert result.segments[0].end_time_seconds == 1.0
-        assert result.segments[1].voice_id == "def456"
-        assert result.segments[1].start_time_seconds == 1.0
-        assert result.segments[1].end_time_seconds == 2.0
-
-        # Verify call arguments
-        call_args = (
-            mock_elevenlabs_happy.text_to_dialogue.convert_with_timestamps.call_args
-        )
-        assert call_args.kwargs["model_id"] == "eleven_v3"
-        assert call_args.kwargs["output_format"] == "mp3_44100_128"
-        assert call_args.kwargs["language_code"] == "en"
-        assert isinstance(call_args.kwargs["settings"], ModelSettingsResponseModel)
-        assert call_args.kwargs["settings"].stability == 0.5
-
-        # Verify inputs were correctly transformed
-        inputs = call_args.kwargs["inputs"]
-        assert len(inputs) == 2
-        assert all(isinstance(inp, DialogueInput) for inp in inputs)
-        assert inputs[0].text == "[happily] How are you?"
-        assert inputs[0].voice_id == "abc123"
-        assert inputs[1].text == "[whispering] Fine, thank you."
-        assert inputs[1].voice_id == "def456"
+    
+    # ZZZ
 
     # def test_get_dialog_unprocessable_entity_error_with_detail(
     #     self,
