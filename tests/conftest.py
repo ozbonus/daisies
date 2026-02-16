@@ -23,7 +23,6 @@ def sample_script() -> list[dict[str, str]]:
         {"text": "[whispering] Fine, thank you.", "voice_id": "def456"},
     ]
 
-
 @pytest.fixture
 def mock_elevenlabs_happy():
     mock = MagicMock(spec=ElevenLabs)
@@ -55,7 +54,7 @@ def mock_elevenlabs_happy():
 
 
 @pytest.fixture
-def mock_elevenlabs_unprocessable_error_with_detail():
+def mock_api_unprocessable_entity_error():
     mock = MagicMock(spec=ElevenLabs)
     error = UnprocessableEntityError(body=MagicMock())
     error.body.detail = [
@@ -65,4 +64,39 @@ def mock_elevenlabs_unprocessable_error_with_detail():
         )
     ]
     mock.text_to_dialogue.convert_with_timestamps.side_effect = error
+    return mock
+
+
+@pytest.fixture
+def mock_api_unhandled_error():
+    mock = MagicMock(spec=ElevenLabs)
+    error = Exception()
+    mock.text_to_dialogue.convert_with_timestamps.side_effect = error
+    return mock
+
+
+@pytest.fixture
+def mock_elevenlabs_api_bad_audio():
+    mock = MagicMock(spec=ElevenLabs)
+    mock_result = MagicMock(spec=AudioWithTimestampsAndVoiceSegmentsResponseModel)
+    mock_result.audio_base_64 = "BAD_BASE64_AUDIO"
+    mock_result.voice_segments = [
+        VoiceSegment(
+            voice_id="abc123",
+            start_time_seconds=0.0,
+            end_time_seconds=1.0,
+            character_start_index=0,
+            character_end_index=1,
+            dialogue_input_index=0,
+        ),
+        VoiceSegment(
+            voice_id="def456",
+            start_time_seconds=1.0,
+            end_time_seconds=2.0,
+            character_start_index=0,
+            character_end_index=1,
+            dialogue_input_index=1,
+        ),
+    ]
+    mock.text_to_dialogue.convert_with_timestamps.return_value = mock_result
     return mock

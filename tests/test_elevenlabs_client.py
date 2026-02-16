@@ -1,6 +1,6 @@
 import pytest
 from elevenlabs_client import ElevenLabsClient, DialogResponse
-from elevenlabs import DialogueInput, UnprocessableEntityError, VoiceSegment
+from elevenlabs import DialogueInput, VoiceSegment
 from elevenlabs.types import ModelSettingsResponseModel
 from errors import Base64DecodeError, ElevenLabsClientError, ScriptError
 
@@ -118,26 +118,38 @@ class TestElevenLabsClientGetDialogSuccess:
         assert self.result.segments[1].voice_id == "def456"
         assert self.result.segments[1].start_time_seconds == 1.0
         assert self.result.segments[1].end_time_seconds == 2.0
-    
-    # ZZZ
 
-    # def test_get_dialog_unprocessable_entity_error_with_detail(
-    #     self,
-    #     mock_elevenlabs_unprocessable_error_with_detail,
-    #     sample_script,
-    # ):
-    #     """
-    #     Test getting a 402 Unprocessable Entity Error.
-    #     """
 
-    #     # Setup
-    #     client = ElevenLabsClient(
-    #         client=mock_elevenlabs_unprocessable_error_with_detail
-    #     )
-    #     response = client.get_dialog(sample_script)
+class TestElevenLabsClientError:
+    """Test various scenarios when errors should be raised."""
 
-    #     # Assert the mocked method was called.
-    #     mock_elevenlabs_unprocessable_error_with_detail.text_to_dialogue.convert_with_timestamps.assert_called_once()
+    def test_raise_elevenlabs_client_error_on_unprocessable_input(
+        self,
+        sample_script,
+        mock_api_unprocessable_entity_error,
+    ):
+        client = ElevenLabsClient(mock_api_unprocessable_entity_error)
+        with pytest.raises(ElevenLabsClientError) as exception_info:
+            client.get_dialog(sample_script)
+        assert "Error location" in exception_info.value.msg
+        assert "Error message" in exception_info.value.msg
 
-    #     # Assert result type and structure.
-    #     assert isinstance(response, UnprocessableEntityError)
+    def test_raise_elevenlabs_client_error_on_unhandled_error(
+        self,
+        sample_script,
+        mock_api_unhandled_error,
+    ):
+        client = ElevenLabsClient(mock_api_unhandled_error)
+        with pytest.raises(ElevenLabsClientError) as exception_info:
+            client.get_dialog(sample_script)
+        assert "Unhandled API client error" in exception_info.value.msg
+
+    def test_raise_base64_decode_error_on_value_error(
+        self,
+        sample_script,
+        mock_elevenlabs_api_bad_audio,
+    ):
+        client = ElevenLabsClient(mock_elevenlabs_api_bad_audio)
+        with pytest.raises(Base64DecodeError) as exception_info:
+            client.get_dialog(sample_script)
+        assert "Error decoding audio to bytes." in exception_info.value.msg
