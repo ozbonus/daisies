@@ -8,6 +8,11 @@ import pytest
 from unittest.mock import MagicMock, patch
 import os
 
+SCRIPT_TEXT_1 = "[happily] How are you?"
+SCRIPT_TEXT_2 = "[whispering] Fine, thank you."
+SCRIPT_VOICE_ID_1 = "abc123"
+SCRIPT_VOICE_ID_2 = "def456"
+
 
 @pytest.fixture(autouse=True)
 def mock_env_vars():
@@ -19,8 +24,8 @@ def mock_env_vars():
 def sample_script() -> list[dict[str, str]]:
     """A minimal dialog for testing."""
     return [
-        {"text": "[happily] How are you?", "voice_id": "abc123"},
-        {"text": "[whispering] Fine, thank you.", "voice_id": "def456"},
+        {"text": SCRIPT_TEXT_1, "voice_id": SCRIPT_VOICE_ID_1},
+        {"text": SCRIPT_TEXT_2, "voice_id": SCRIPT_VOICE_ID_2},
     ]
 
 @pytest.fixture
