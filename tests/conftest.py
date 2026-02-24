@@ -36,7 +36,7 @@ def mock_elevenlabs_happy():
     mock_result.audio_base_64 = "aGVsbG8egd29ybGQ"
     mock_result.voice_segments = [
         VoiceSegment(
-            voice_id="abc123",
+            voice_id=SCRIPT_VOICE_ID_1,
             start_time_seconds=0.0,
             end_time_seconds=1.0,
             character_start_index=0,
@@ -44,7 +44,7 @@ def mock_elevenlabs_happy():
             dialogue_input_index=0,
         ),
         VoiceSegment(
-            voice_id="def456",
+            voice_id=SCRIPT_VOICE_ID_2,
             start_time_seconds=1.0,
             end_time_seconds=2.0,
             character_start_index=0,
