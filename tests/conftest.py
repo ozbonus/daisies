@@ -1,7 +1,9 @@
 from elevenlabs import (
     AudioWithTimestampsAndVoiceSegmentsResponseModel,
     ElevenLabs,
+    GetVoicesResponse,
     UnprocessableEntityError,
+    Voice,
     VoiceSegment,
 )
 import pytest
@@ -12,6 +14,8 @@ SCRIPT_TEXT_1 = "[happily] How are you?"
 SCRIPT_TEXT_2 = "[whispering] Fine, thank you."
 SCRIPT_VOICE_ID_1 = "abc123"
 SCRIPT_VOICE_ID_2 = "def456"
+USER_VOICE_1 = Voice(voice_id=SCRIPT_VOICE_ID_1)
+USER_VOICE_2 = Voice(voice_id=SCRIPT_VOICE_ID_2)
 
 
 @pytest.fixture(autouse=True)
@@ -27,6 +31,7 @@ def sample_script() -> list[dict[str, str]]:
         {"text": SCRIPT_TEXT_1, "voice_id": SCRIPT_VOICE_ID_1},
         {"text": SCRIPT_TEXT_2, "voice_id": SCRIPT_VOICE_ID_2},
     ]
+
 
 @pytest.fixture
 def mock_elevenlabs_happy():
@@ -104,4 +109,13 @@ def mock_elevenlabs_api_bad_audio():
         ),
     ]
     mock.text_to_dialogue.convert_with_timestamps.return_value = mock_result
+    return mock
+
+
+@pytest.fixture
+def mock_elevenlabs_api_get_voices_happy():
+    mock = MagicMock(spec=ElevenLabs)
+    mock_result = MagicMock(spec=GetVoicesResponse)
+    mock_result.voices = [USER_VOICE_1, USER_VOICE_2]
+    mock.voices.get_all.return_value = mock_result
     return mock
