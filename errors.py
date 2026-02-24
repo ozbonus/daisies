@@ -13,3 +13,20 @@ class ScriptError(ValueError):
     def __init__(self, msg: str):
         self.msg = f"Script Error: {msg}"
         super().__init__(msg)
+
+
+class VoiceNotAvailableError(ValueError):
+    """
+    Raised when the script contains voice IDs that are not available to the user
+    account associated with the current API key.
+    """
+
+    def __init__(self, voice_ids: list[str]):
+        self.voice_ids = voice_ids
+        ids = ", ".join(voice_ids)
+        self.msg = (
+            "The following voice IDs are used in the script"
+            "but are not available to the current API key:"
+            f"{ids}"
+        )
+        super().__init__(self.msg)
