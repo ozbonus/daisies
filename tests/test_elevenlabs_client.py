@@ -2,7 +2,7 @@ import pytest
 from elevenlabs_client import ElevenLabsClient, DialogResponse
 from elevenlabs import DialogueInput, VoiceSegment
 from elevenlabs.types import ModelSettingsResponseModel
-from errors import Base64DecodeError, ElevenLabsClientError, ScriptError
+from errors import Base64DecodeError, ElevenLabsClientError, ScriptError, VoiceNotAvailableError
 
 
 class TestElevenLabsClientMakeInputSequenceSuccess:
@@ -153,3 +153,19 @@ class TestElevenLabsClientError:
         with pytest.raises(Base64DecodeError) as exception_info:
             client.get_dialog(sample_script)
         assert "Error decoding audio to bytes." in exception_info.value.msg
+
+
+class TestElevenLabsClientVerifyVoices:
+    def test_voices_available(self, sample_script, mock_elevenlabs_happy):
+        client = ElevenLabsClient(mock_elevenlabs_happy)
+        client._verify_voices(sample_script)
+
+    def test_voice_not_available(
+        self,
+        sample_script_unavailable_voice,
+        mock_elevenlabs_happy,
+    ):
+        client = ElevenLabsClient(mock_elevenlabs_happy)
+        with pytest.raises(VoiceNotAvailableError) as exception_info:
+            client._verify_voices(sample_script_unavailable_voice)
+

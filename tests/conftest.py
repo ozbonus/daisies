@@ -10,13 +10,6 @@ import pytest
 from unittest.mock import MagicMock, patch
 import os
 
-SCRIPT_TEXT_1 = "[happily] How are you?"
-SCRIPT_TEXT_2 = "[whispering] Fine, thank you."
-SCRIPT_VOICE_ID_1 = "abc123"
-SCRIPT_VOICE_ID_2 = "def456"
-USER_VOICE_1 = Voice(voice_id=SCRIPT_VOICE_ID_1)
-USER_VOICE_2 = Voice(voice_id=SCRIPT_VOICE_ID_2)
-
 
 @pytest.fixture(autouse=True)
 def mock_env_vars():
@@ -25,23 +18,84 @@ def mock_env_vars():
 
 
 @pytest.fixture
-def sample_script() -> list[dict[str, str]]:
-    """A minimal dialog for testing."""
+def script_text_1() -> str:
+    return "Blah blah."
+
+
+@pytest.fixture
+def script_text_2() -> str:
+    return "Blah blah blah."
+
+
+@pytest.fixture
+def script_voice_id_1() -> str:
+    return "abc123"
+
+
+@pytest.fixture
+def script_voice_id_2() -> str:
+    return "def456"
+
+
+@pytest.fixture
+def script_voice_id_3() -> str:
+    return "ghi789"
+
+
+@pytest.fixture
+def user_voice_1(script_voice_id_1: str) -> Voice:
+    return Voice(voice_id=script_voice_id_1)
+
+
+@pytest.fixture
+def user_voice_2(script_voice_id_2: str) -> Voice:
+    return Voice(voice_id=script_voice_id_2)
+
+
+@pytest.fixture
+def sample_script(
+    script_text_1: str,
+    script_text_2: str,
+    script_voice_id_1: str,
+    script_voice_id_2: str,
+) -> list[dict[str, str]]:
+    """
+    A minimal dialog for testing.
+    """
     return [
-        {"text": SCRIPT_TEXT_1, "voice_id": SCRIPT_VOICE_ID_1},
-        {"text": SCRIPT_TEXT_2, "voice_id": SCRIPT_VOICE_ID_2},
+        {"text": script_text_1, "voice_id": script_voice_id_1},
+        {"text": script_text_2, "voice_id": script_voice_id_2},
     ]
 
 
 @pytest.fixture
-def mock_elevenlabs_happy():
-    mock = MagicMock(spec=ElevenLabs)
+def sample_script_unavailable_voice(
+    script_text_1: str,
+    script_text_2: str,
+    script_voice_id_2: str,
+    script_voice_id_3: str,
+) -> list[dict[str, str]]:
+    """
+    `script_voice_id_3` is meant to simulate a voice ID that is not among the
+    ones available to the user.
+    """
+    return [
+        {"text": script_text_1, "voice_id": script_voice_id_2},  # Not available.
+        {"text": script_text_2, "voice_id": script_voice_id_3},
+    ]
 
-    mock_result = MagicMock(spec=AudioWithTimestampsAndVoiceSegmentsResponseModel)
-    mock_result.audio_base_64 = "aGVsbG8egd29ybGQ"
-    mock_result.voice_segments = [
+
+@pytest.fixture
+def voice_segments(
+    script_voice_id_1: str,
+    script_voice_id_2: str,
+) -> list[VoiceSegment]:
+    """
+    A mock list of voice segments to mimic a successful response.
+    """
+    return [
         VoiceSegment(
-            voice_id=SCRIPT_VOICE_ID_1,
+            voice_id=script_voice_id_1,
             start_time_seconds=0.0,
             end_time_seconds=1.0,
             character_start_index=0,
@@ -49,7 +103,7 @@ def mock_elevenlabs_happy():
             dialogue_input_index=0,
         ),
         VoiceSegment(
-            voice_id=SCRIPT_VOICE_ID_2,
+            voice_id=script_voice_id_2,
             start_time_seconds=1.0,
             end_time_seconds=2.0,
             character_start_index=0,
@@ -58,7 +112,33 @@ def mock_elevenlabs_happy():
         ),
     ]
 
-    mock.text_to_dialogue.convert_with_timestamps.return_value = mock_result
+
+@pytest.fixture
+def mock_elevenlabs_happy(
+    voice_segments: list[VoiceSegment],
+    user_voice_1: str,
+    user_voice_2: str,
+):
+    mock = MagicMock(spec=ElevenLabs)
+
+    """
+    Mock a successful result of requesting a dialogue with timestamps.
+    """
+    mock_get_dialogue_result = MagicMock(
+        spec=AudioWithTimestampsAndVoiceSegmentsResponseModel
+    )
+    mock_get_dialogue_result.audio_base_64 = "aGVsbG8egd29ybGQ"
+    mock_get_dialogue_result.voice_segments = voice_segments
+    mock.text_to_dialogue.convert_with_timestamps.return_value = (
+        mock_get_dialogue_result
+    )
+
+    """
+    Mock a successful request for the voices available to the API key.
+    """
+    mock_verify_voices_result = MagicMock(spec=GetVoicesResponse)
+    mock_verify_voices_result.voices = [user_voice_1, user_voice_2]
+    mock.voices.get_all.return_value = mock_verify_voices_result
 
     return mock
 
@@ -109,13 +189,4 @@ def mock_elevenlabs_api_bad_audio():
         ),
     ]
     mock.text_to_dialogue.convert_with_timestamps.return_value = mock_result
-    return mock
-
-
-@pytest.fixture
-def mock_elevenlabs_api_get_voices_happy():
-    mock = MagicMock(spec=ElevenLabs)
-    mock_result = MagicMock(spec=GetVoicesResponse)
-    mock_result.voices = [USER_VOICE_1, USER_VOICE_2]
-    mock.voices.get_all.return_value = mock_result
     return mock
