@@ -16,7 +16,6 @@ from elevenlabs.types import ModelSettingsResponseModel, VoiceSegment
 from errors import (
     Base64DecodeError,
     ElevenLabsClientError,
-    ScriptError,
     ScriptKeyError,
     VoiceNotAvailableError,
 )
