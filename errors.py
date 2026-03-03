@@ -25,8 +25,8 @@ class VoiceNotAvailableError(ValueError):
         self.voice_ids = voice_ids
         ids = ", ".join(voice_ids)
         self.msg = (
-            "The following voice IDs are used in the script"
-            "but are not available to the current API key:"
+            "The following voice IDs are used in the script "
+            "but are not available to the current API key: "
             f"{ids}"
         )
         super().__init__(self.msg)
