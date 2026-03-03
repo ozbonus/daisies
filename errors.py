@@ -15,6 +15,11 @@ class ScriptError(ValueError):
         super().__init__(msg)
 
 
+class ScriptKeyError(ValueError):
+    def __init__(self, key: str):
+        self.msg = f"The scripts is missing the key: {key}"
+
+
 class VoiceNotAvailableError(ValueError):
     """
     Raised when the script contains voice IDs that are not available to the user

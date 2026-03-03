@@ -17,6 +17,7 @@ from errors import (
     Base64DecodeError,
     ElevenLabsClientError,
     ScriptError,
+    ScriptKeyError,
     VoiceNotAvailableError,
 )
 
@@ -79,7 +80,7 @@ class ElevenLabsClient:
             return inputs
         except KeyError as error:
             missing_key: str = error.args[0]
-            raise ScriptError(msg=f"Missing the required key {missing_key}")
+            raise ScriptKeyError(key=missing_key)
 
     def get_dialog(self, script: List[Dict[str, str]]) -> DialogResponse:
         dialog_input_sequence = self._make_input_sequence(script)

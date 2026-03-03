@@ -6,6 +6,7 @@ from errors import (
     Base64DecodeError,
     ElevenLabsClientError,
     ScriptError,
+    ScriptKeyError,
     VoiceNotAvailableError,
 )
 
@@ -58,7 +59,7 @@ class TestElevenLabsClientMakeInputSequenceErrors:
         ],
     )
     def test_raise_script_error(self, script, expected_key):
-        with pytest.raises(ScriptError) as exception:
+        with pytest.raises(ScriptKeyError) as exception:
             self.client._make_input_sequence(script)
         assert expected_key in str(exception.value.msg)
 
@@ -183,6 +184,7 @@ class TestElevenLabsClientVerifyVoices:
     Tests for the `_verify_voices` method that confirms whether or not the
     user's API key may access all of the voices used in the script.
     """
+
     def test_voices_available(self, sample_script, mock_elevenlabs_happy):
         """
         All voices in the script are available to the user's API key. The method
