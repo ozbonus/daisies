@@ -76,11 +76,11 @@ def sample_script_unavailable_voice(
     script_voice_id_3: str,
 ) -> list[dict[str, str]]:
     """
-    `script_voice_id_3` is meant to simulate a voice ID that is not among the
-    ones available to the user.
+    This script contains a reference to a voice that is meant to be unavailable
+    to the user account associated with the API key, `script_voice_id_3.
     """
     return [
-        {"text": script_text_1, "voice_id": script_voice_id_2},  # Not available.
+        {"text": script_text_1, "voice_id": script_voice_id_2},
         {"text": script_text_2, "voice_id": script_voice_id_3},
     ]
 
@@ -116,14 +116,15 @@ def voice_segments(
 @pytest.fixture
 def mock_elevenlabs_happy(
     voice_segments: list[VoiceSegment],
-    user_voice_1: str,
-    user_voice_2: str,
+    user_voice_1: Voice,
+    user_voice_2: Voice,
 ):
+    """
+    Mock a successful ElevenLabs API for happy path events.
+    """
     mock = MagicMock(spec=ElevenLabs)
 
-    """
-    Mock a successful result of requesting a dialogue with timestamps.
-    """
+    # Mock a successful result of requesting a dialogue with timestamps.
     mock_get_dialogue_result = MagicMock(
         spec=AudioWithTimestampsAndVoiceSegmentsResponseModel
     )
@@ -133,9 +134,7 @@ def mock_elevenlabs_happy(
         mock_get_dialogue_result
     )
 
-    """
-    Mock a successful request for the voices available to the API key.
-    """
+    # Mock a successful request for the voices available to the API key.
     mock_verify_voices_result = MagicMock(spec=GetVoicesResponse)
     mock_verify_voices_result.voices = [user_voice_1, user_voice_2]
     mock.voices.get_all.return_value = mock_verify_voices_result
@@ -166,27 +165,12 @@ def mock_api_unhandled_error():
 
 
 @pytest.fixture
-def mock_elevenlabs_api_bad_audio():
+def mock_elevenlabs_api_bad_audio(
+    voice_segments: list[VoiceSegment],
+):
     mock = MagicMock(spec=ElevenLabs)
     mock_result = MagicMock(spec=AudioWithTimestampsAndVoiceSegmentsResponseModel)
     mock_result.audio_base_64 = "BAD_BASE64_AUDIO"
-    mock_result.voice_segments = [
-        VoiceSegment(
-            voice_id="abc123",
-            start_time_seconds=0.0,
-            end_time_seconds=1.0,
-            character_start_index=0,
-            character_end_index=1,
-            dialogue_input_index=0,
-        ),
-        VoiceSegment(
-            voice_id="def456",
-            start_time_seconds=1.0,
-            end_time_seconds=2.0,
-            character_start_index=0,
-            character_end_index=1,
-            dialogue_input_index=1,
-        ),
-    ]
+    mock_result.voice_segments = voice_segments
     mock.text_to_dialogue.convert_with_timestamps.return_value = mock_result
     return mock

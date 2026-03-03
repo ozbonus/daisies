@@ -2,7 +2,12 @@ import pytest
 from elevenlabs_client import ElevenLabsClient, DialogResponse
 from elevenlabs import DialogueInput, VoiceSegment
 from elevenlabs.types import ModelSettingsResponseModel
-from errors import Base64DecodeError, ElevenLabsClientError, ScriptError, VoiceNotAvailableError
+from errors import (
+    Base64DecodeError,
+    ElevenLabsClientError,
+    ScriptError,
+    VoiceNotAvailableError,
+)
 
 
 class TestElevenLabsClientMakeInputSequenceSuccess:
@@ -21,11 +26,17 @@ class TestElevenLabsClientMakeInputSequenceSuccess:
     def test_elements_are_dialog_input(self):
         assert all(isinstance(i, DialogueInput) for i in self.result)
 
-    def test_values(self):
-        assert self.result[0].text == "[happily] How are you?"
-        assert self.result[0].voice_id == "abc123"
-        assert self.result[1].text == "[whispering] Fine, thank you."
-        assert self.result[1].voice_id == "def456"
+    def test_values(
+        self,
+        script_text_1: str,
+        script_text_2: str,
+        script_voice_id_1: str,
+        script_voice_id_2: str,
+    ):
+        assert self.result[0].text == script_text_1
+        assert self.result[0].voice_id == script_voice_id_1
+        assert self.result[1].text == script_text_2
+        assert self.result[1].voice_id == script_voice_id_2
 
 
 class TestElevenLabsClientMakeInputSequenceErrors:
@@ -63,7 +74,13 @@ class TestElevenLabsClientGetDialogSuccess:
         self.result = self.client.get_dialog(sample_script)
         self.mock = mock_elevenlabs_happy
 
-    def test_api_called_with_correct_parameters(self):
+    def test_api_called_with_correct_parameters(
+        self,
+        script_text_1: str,
+        script_text_2: str,
+        script_voice_id_1: str,
+        script_voice_id_2: str,
+    ):
         """Verify the API receives the expected configuration."""
         call_kwargs = (
             self.mock.text_to_dialogue.convert_with_timestamps.call_args.kwargs
@@ -85,10 +102,10 @@ class TestElevenLabsClientGetDialogSuccess:
         inputs = call_kwargs["inputs"]
         assert len(inputs) == 2
         assert all(isinstance(i, DialogueInput) for i in inputs)
-        assert inputs[0].text == "[happily] How are you?"
-        assert inputs[0].voice_id == "abc123"
-        assert inputs[1].text == "[whispering] Fine, thank you."
-        assert inputs[1].voice_id == "def456"
+        assert inputs[0].text == script_text_1
+        assert inputs[0].voice_id == script_voice_id_1
+        assert inputs[1].text == script_text_2
+        assert inputs[1].voice_id == script_voice_id_2
 
     def test_api_is_called(self):
         """Verify that the API method was called once."""
@@ -102,7 +119,11 @@ class TestElevenLabsClientGetDialogSuccess:
         """Verify that the audio data is the correct type."""
         assert isinstance(self.result.audio_data, bytes)
 
-    def test_segments_structure(self):
+    def test_segments_structure(
+        self,
+        script_voice_id_1: str,
+        script_voice_id_2: str,
+    ):
         """Verify the structure and contents of the audio segments."""
         segments = self.result.segments
 
@@ -112,10 +133,10 @@ class TestElevenLabsClientGetDialogSuccess:
         assert all(isinstance(i, VoiceSegment) for i in segments)
 
         # Test the contents of each segment.
-        assert self.result.segments[0].voice_id == "abc123"
+        assert self.result.segments[0].voice_id == script_voice_id_1
         assert self.result.segments[0].start_time_seconds == 0.0
         assert self.result.segments[0].end_time_seconds == 1.0
-        assert self.result.segments[1].voice_id == "def456"
+        assert self.result.segments[1].voice_id == script_voice_id_2
         assert self.result.segments[1].start_time_seconds == 1.0
         assert self.result.segments[1].end_time_seconds == 2.0
 
@@ -152,6 +173,7 @@ class TestElevenLabsClientError:
         client = ElevenLabsClient(mock_elevenlabs_api_bad_audio)
         with pytest.raises(Base64DecodeError) as exception_info:
             client.get_dialog(sample_script)
+        mock_elevenlabs_api_bad_audio.text_to_dialogue.convert_with_timestamps.assert_called_once()
         assert "Error decoding audio to bytes." in exception_info.value.msg
 
 
@@ -159,13 +181,16 @@ class TestElevenLabsClientVerifyVoices:
     def test_voices_available(self, sample_script, mock_elevenlabs_happy):
         client = ElevenLabsClient(mock_elevenlabs_happy)
         client._verify_voices(sample_script)
+        mock_elevenlabs_happy.voices.get_all.assert_called_once()
+        
 
     def test_voice_not_available(
         self,
         sample_script_unavailable_voice,
         mock_elevenlabs_happy,
+        script_voice_id_3,
     ):
         client = ElevenLabsClient(mock_elevenlabs_happy)
         with pytest.raises(VoiceNotAvailableError) as exception_info:
             client._verify_voices(sample_script_unavailable_voice)
-
+        assert script_voice_id_3 in exception_info.value.msg
