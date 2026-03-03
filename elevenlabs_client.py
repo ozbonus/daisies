@@ -1,4 +1,5 @@
 import base64
+import binascii
 import os
 from dataclasses import dataclass
 from typing import Dict, List
@@ -39,7 +40,7 @@ class ElevenLabsClient:
         self.client = client
 
     def _str_to_bytes(self, data: str) -> bytes:
-        return base64.b64decode(data)
+        return base64.b64decode(data, validate=True)
 
     def _verify_voices(self, script: List[Dict[str, str]]) -> None:
         """
@@ -108,7 +109,7 @@ class ElevenLabsClient:
 
         try:
             audio_data = self._str_to_bytes(result.audio_base_64)
-        except ValueError:
+        except binascii.Error:
             raise Base64DecodeError()
 
         return DialogResponse(

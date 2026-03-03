@@ -169,6 +169,7 @@ class TestElevenLabsClientError:
         self,
         sample_script,
         mock_elevenlabs_api_bad_audio,
+        invalid_base64_audio_string,
     ):
         client = ElevenLabsClient(mock_elevenlabs_api_bad_audio)
         with pytest.raises(Base64DecodeError) as exception_info:
@@ -178,11 +179,18 @@ class TestElevenLabsClientError:
 
 
 class TestElevenLabsClientVerifyVoices:
+    """
+    Tests for the `_verify_voices` method that confirms whether or not the
+    user's API key may access all of the voices used in the script.
+    """
     def test_voices_available(self, sample_script, mock_elevenlabs_happy):
+        """
+        All voices in the script are available to the user's API key. The method
+        should not raise and error.
+        """
         client = ElevenLabsClient(mock_elevenlabs_happy)
         client._verify_voices(sample_script)
         mock_elevenlabs_happy.voices.get_all.assert_called_once()
-        
 
     def test_voice_not_available(
         self,
@@ -190,7 +198,13 @@ class TestElevenLabsClientVerifyVoices:
         mock_elevenlabs_happy,
         script_voice_id_3,
     ):
+        """
+        The script contains one voice that is not available to the user's API.
+        Should raise a `VoiceNotAvailableError` and the error message should
+        contain the offending voice ID.
+        """
         client = ElevenLabsClient(mock_elevenlabs_happy)
         with pytest.raises(VoiceNotAvailableError) as exception_info:
             client._verify_voices(sample_script_unavailable_voice)
+        mock_elevenlabs_happy.voices.get_all.assert_called_once()
         assert script_voice_id_3 in exception_info.value.msg

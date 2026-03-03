@@ -86,6 +86,16 @@ def sample_script_unavailable_voice(
 
 
 @pytest.fixture
+def invalid_base64_audio_string() -> str:
+    """
+    This is an invalid base-64 string because exclamation points are not within
+    the set of ASCII characters that can be conventionally used to encode
+    base-64.
+    """
+    return "!!!"
+
+
+@pytest.fixture
 def voice_segments(
     script_voice_id_1: str,
     script_voice_id_2: str,
@@ -158,6 +168,10 @@ def mock_api_unprocessable_entity_error():
 
 @pytest.fixture
 def mock_api_unhandled_error():
+    """
+    Unhandled errors should raise an `ElevenLabsClientError` when encountered
+    within `ElevenlabsClient`.
+    """
     mock = MagicMock(spec=ElevenLabs)
     error = Exception()
     mock.text_to_dialogue.convert_with_timestamps.side_effect = error
@@ -166,11 +180,12 @@ def mock_api_unhandled_error():
 
 @pytest.fixture
 def mock_elevenlabs_api_bad_audio(
+    invalid_base64_audio_string: str,
     voice_segments: list[VoiceSegment],
 ):
     mock = MagicMock(spec=ElevenLabs)
     mock_result = MagicMock(spec=AudioWithTimestampsAndVoiceSegmentsResponseModel)
-    mock_result.audio_base_64 = "BAD_BASE64_AUDIO"
+    mock_result.audio_base_64 = invalid_base64_audio_string
     mock_result.voice_segments = voice_segments
     mock.text_to_dialogue.convert_with_timestamps.return_value = mock_result
     return mock
