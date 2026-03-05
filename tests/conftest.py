@@ -18,6 +18,16 @@ def mock_env_vars():
 
 
 @pytest.fixture
+def script_language_code() -> str:
+    return "eo"
+
+
+@pytest.fixture
+def script_country_code() -> str:
+    return "AQ"
+
+
+@pytest.fixture
 def script_text_1() -> str:
     return "Blah blah."
 
@@ -58,14 +68,18 @@ def sample_script(
     script_text_2: str,
     script_voice_id_1: str,
     script_voice_id_2: str,
-) -> list[dict[str, str]]:
+) -> dict[str, object]:
     """
     A minimal dialog for testing.
     """
-    return [
-        {"text": script_text_1, "voice_id": script_voice_id_1},
-        {"text": script_text_2, "voice_id": script_voice_id_2},
-    ]
+    return {
+        "languageCode": script_language_code,
+        "countryCode": script_country_code,
+        "lines": [
+            {"text": script_text_1, "voice_id": script_voice_id_1},
+            {"text": script_text_2, "voice_id": script_voice_id_2},
+        ],
+    }
 
 
 @pytest.fixture
@@ -74,15 +88,19 @@ def sample_script_unavailable_voice(
     script_text_2: str,
     script_voice_id_2: str,
     script_voice_id_3: str,
-) -> list[dict[str, str]]:
+) -> dict[str, object]:
     """
     This script contains a reference to a voice that is meant to be unavailable
     to the user account associated with the API key, `script_voice_id_3.
     """
-    return [
-        {"text": script_text_1, "voice_id": script_voice_id_2},
-        {"text": script_text_2, "voice_id": script_voice_id_3},
-    ]
+    return {
+        "languageCode": script_language_code,
+        "countryCode": script_country_code,
+        "lines": [
+            {"text": script_text_1, "voice_id": script_voice_id_1},
+            {"text": script_text_2, "voice_id": script_voice_id_3},
+        ],
+    }
 
 
 @pytest.fixture
