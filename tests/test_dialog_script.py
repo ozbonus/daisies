@@ -1,0 +1,38 @@
+from json import JSONDecodeError
+from jsonschema import ValidationError
+import pytest
+
+from dialog_script import DialogScript
+
+
+class TestDialogScriptLoadScript:
+    def test_complete_script(
+        self,
+        sample_script_file,
+        script_language_code,
+        script_country_code,
+        script_voice_id_1,
+        script_voice_id_2,
+    ):
+        script = DialogScript(sample_script_file)
+        assert script is not None
+        assert script.language_code == script_language_code
+        assert script.country_code == script_country_code
+        assert script.voices() == (script_voice_id_1, script_voice_id_2)
+
+    def test_no_country_code(self, sample_script_file_no_country_code):
+        script = DialogScript(sample_script_file_no_country_code)
+        assert script is not None
+        assert script.country_code is None
+
+    def test_invalid_json(self, sample_script_file_invalid_json):
+        with pytest.raises(JSONDecodeError):
+            DialogScript(sample_script_file_invalid_json)
+
+    def test_schema_violation(self, sample_script_schema_violation):
+        with pytest.raises(ValidationError):
+            DialogScript(sample_script_schema_violation)
+
+    def test_encoding_error(self, sample_script_encoding_error):
+        with pytest.raises(UnicodeDecodeError):
+            DialogScript(sample_script_encoding_error)

@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from elevenlabs import (
     AudioWithTimestampsAndVoiceSegmentsResponseModel,
     ElevenLabs,
@@ -64,6 +67,8 @@ def user_voice_2(script_voice_id_2: str) -> Voice:
 
 @pytest.fixture
 def sample_script(
+    script_language_code: str,
+    script_country_code: str,
     script_text_1: str,
     script_text_2: str,
     script_voice_id_1: str,
@@ -73,20 +78,137 @@ def sample_script(
     A minimal dialog for testing.
     """
     return {
-        "languageCode": script_language_code,
-        "countryCode": script_country_code,
+        "locale": {
+            "languageCode": script_language_code,
+            "countryCode": script_country_code,
+        },
         "lines": [
-            {"text": script_text_1, "voiceId": script_voice_id_1},
-            {"text": script_text_2, "voiceId": script_voice_id_2},
+            {
+                "text": script_text_1,
+                "voiceId": script_voice_id_1,
+            },
+            {
+                "text": script_text_2,
+                "voiceId": script_voice_id_2,
+            },
         ],
     }
 
 
 @pytest.fixture
-def sample_script_unavailable_voice(
+def sample_script_file(
+    tmp_path,
+    script_language_code: str,
+    script_country_code: str,
     script_text_1: str,
     script_text_2: str,
+    script_voice_id_1: str,
     script_voice_id_2: str,
+) -> Path:
+    script = {
+        "locale": {
+            "languageCode": script_language_code,
+            "countryCode": script_country_code,
+        },
+        "lines": [
+            {
+                "text": script_text_1,
+                "voiceId": script_voice_id_1,
+            },
+            {
+                "text": script_text_2,
+                "voiceId": script_voice_id_2,
+            },
+        ],
+    }
+    script_file = tmp_path / "script.json"
+    script_file.write_text(json.dumps(script))
+    return script_file
+
+
+@pytest.fixture
+def sample_script_file_no_country_code(
+    tmp_path,
+    script_language_code: str,
+    script_text_1: str,
+    script_text_2: str,
+    script_voice_id_1: str,
+    script_voice_id_2: str,
+) -> Path:
+    script = {
+        "locale": {
+            "languageCode": script_language_code,
+        },
+        "lines": [
+            {
+                "text": script_text_1,
+                "voiceId": script_voice_id_1,
+            },
+            {
+                "text": script_text_2,
+                "voiceId": script_voice_id_2,
+            },
+        ],
+    }
+    script_file = tmp_path / "script.json"
+    script_file.write_text(json.dumps(script))
+    return script_file
+
+
+@pytest.fixture
+def sample_script_schema_violation(
+    tmp_path,
+    script_text_1: str,
+    script_text_2: str,
+    script_voice_id_1: str,
+    script_voice_id_2: str,
+) -> Path:
+    """
+    The required key "locale" is missing, but it's otherwise valid JSON.
+    """
+    script = {
+        "lines": [
+            {
+                "text": script_text_1,
+                "voiceId": script_voice_id_1,
+            },
+            {
+                "text": script_text_2,
+                "voiceId": script_voice_id_2,
+            },
+        ],
+    }
+    script_file = tmp_path / "script.json"
+    script_file.write_text(json.dumps(script))
+    return script_file
+
+
+@pytest.fixture
+def sample_script_encoding_error(
+    tmp_path,
+) -> Path:
+    """
+    A file encoded in Shift-JIS, which is not valid for creating JSON files.
+    """
+    script_file = tmp_path / "script.json"
+    script_file.write_bytes(b"\xff\xfe")
+    return script_file
+
+
+@pytest.fixture
+def sample_script_file_invalid_json(tmp_path) -> Path:
+    script_file = tmp_path / "script.json"
+    script_file.write_text("?")
+    return script_file
+
+
+@pytest.fixture
+def sample_script_unavailable_voice(
+    script_language_code: str,
+    script_country_code: str,
+    script_text_1: str,
+    script_text_2: str,
+    script_voice_id_1: str,
     script_voice_id_3: str,
 ) -> dict[str, object]:
     """
@@ -94,8 +216,10 @@ def sample_script_unavailable_voice(
     to the user account associated with the API key, `script_voice_id_3.
     """
     return {
-        "languageCode": script_language_code,
-        "countryCode": script_country_code,
+        "locale": {
+            "languageCode": script_language_code,
+            "countryCode": script_country_code,
+        },
         "lines": [
             {"text": script_text_1, "voiceId": script_voice_id_1},
             {"text": script_text_2, "voiceId": script_voice_id_3},
