@@ -76,8 +76,8 @@ def sample_script(
         "languageCode": script_language_code,
         "countryCode": script_country_code,
         "lines": [
-            {"text": script_text_1, "voice_id": script_voice_id_1},
-            {"text": script_text_2, "voice_id": script_voice_id_2},
+            {"text": script_text_1, "voiceId": script_voice_id_1},
+            {"text": script_text_2, "voiceId": script_voice_id_2},
         ],
     }
 
@@ -97,8 +97,8 @@ def sample_script_unavailable_voice(
         "languageCode": script_language_code,
         "countryCode": script_country_code,
         "lines": [
-            {"text": script_text_1, "voice_id": script_voice_id_1},
-            {"text": script_text_2, "voice_id": script_voice_id_3},
+            {"text": script_text_1, "voiceId": script_voice_id_1},
+            {"text": script_text_2, "voiceId": script_voice_id_3},
         ],
     }
 
