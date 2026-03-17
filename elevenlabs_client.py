@@ -64,7 +64,7 @@ class ElevenLabsClient:
             VoiceNotAvailableError: One or more unavailable voices are used.
         """
 
-        voices_query: GetVoicesResponse = self.api.voices.get_all()
+        voices_query = self.api.voices.get_all()
         user_voices: list[str] = [voice.voice_id for voice in voices_query.voices]
         unavailable_voices = [v for v in voice_ids if v not in user_voices]
 
