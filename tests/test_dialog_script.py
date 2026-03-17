@@ -12,14 +12,11 @@ class TestDialogScriptLoadScript:
         sample_script_file,
         script_language_code,
         script_country_code,
-        script_voice_id_1,
-        script_voice_id_2,
     ):
         script = DialogScript(sample_script_file)
         assert script is not None
         assert script.language_code == script_language_code
         assert script.country_code == script_country_code
-        assert script.voices() == (script_voice_id_1, script_voice_id_2)
 
     def test_no_country_code(self, sample_script_file_no_country_code):
         script = DialogScript(sample_script_file_no_country_code)
@@ -37,6 +34,19 @@ class TestDialogScriptLoadScript:
     def test_encoding_error(self, sample_script_encoding_error):
         with pytest.raises(UnicodeDecodeError):
             DialogScript(sample_script_encoding_error)
+
+
+class TestDialogScriptVoicesMethod:
+    def test_voices(
+        self,
+        sample_script_file,
+        script_voice_id_1,
+        script_voice_id_2,
+    ):
+        script = DialogScript(sample_script_file)
+        voices = script.voices()
+        expected: tuple[str, ...] = (script_voice_id_1, script_voice_id_2)
+        assert voices == expected
 
 
 class TestDialogScriptDialogInputsMethod:
