@@ -36,8 +36,8 @@ class ElevenLabsClient:
     A wrapper for ElevenLabs text-to-dialog API.
     """
 
-    def __init__(self, client: ElevenLabs):
-        self.client = client
+    def __init__(self, api: ElevenLabs):
+        self.api = api
 
     def _str_to_bytes(self, data: str) -> bytes:
         return base64.b64decode(data, validate=True)
@@ -56,7 +56,7 @@ class ElevenLabsClient:
         user_voices: list[str] = []
         unavailable_voices: list[str] = []
 
-        voices_query: GetVoicesResponse = self.client.voices.get_all()
+        voices_query: GetVoicesResponse = self.api.voices.get_all()
         for voice in voices_query.voices:
             user_voices.append(voice.voice_id)
 
@@ -87,7 +87,7 @@ class ElevenLabsClient:
         settings = ModelSettingsResponseModel(stability=0.5)
 
         try:
-            result = self.client.text_to_dialogue.convert_with_timestamps(
+            result = self.api.text_to_dialogue.convert_with_timestamps(
                 model_id="eleven_v3",
                 settings=settings,
                 output_format="mp3_44100_128",
@@ -119,8 +119,8 @@ class ElevenLabsClient:
 
 
 load_dotenv()
-client = ElevenLabs(
+api = ElevenLabs(
     base_url="https://api.elevenlabs.io",
     api_key=os.getenv("API_KEY"),
 )
-eleven_labs_client = ElevenLabsClient(client=client)
+eleven_labs_client = ElevenLabsClient(api=api)
