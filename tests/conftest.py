@@ -189,7 +189,7 @@ def sample_script_encoding_error(
     tmp_path,
 ) -> Path:
     """
-    A file encoded in Shift-JIS, which is not valid for creating JSON files.
+    A file with non-Unicode encoding, which is invalid for creating JSON files.
     """
     script_file = tmp_path / "script.json"
     script_file.write_bytes(b"\xff\xfe")
