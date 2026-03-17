@@ -284,7 +284,7 @@ def voice_segments(
 
 
 @pytest.fixture
-def mock_elevenlabs_happy(
+def mock_elevenlabs_api(
     voice_segments: list[VoiceSegment],
     user_voice_1: Voice,
     user_voice_2: Voice,

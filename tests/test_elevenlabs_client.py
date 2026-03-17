@@ -17,8 +17,8 @@ class TestElevenLabsClientMakeInputSequenceSuccess:
     """
 
     @pytest.fixture(autouse=True)
-    def setup(self, mock_elevenlabs_happy, sample_script):
-        self.client = ElevenLabsClient(mock_elevenlabs_happy)
+    def setup(self, mock_elevenlabs_api, sample_script):
+        self.client = ElevenLabsClient(mock_elevenlabs_api)
         self.result = self.client._make_input_sequence(sample_script)
 
     def test_is_list(self):
@@ -46,8 +46,8 @@ class TestElevenLabsClientMakeInputSequenceErrors:
     """
 
     @pytest.fixture(autouse=True)
-    def setup(self, mock_elevenlabs_happy):
-        self.client = ElevenLabsClient(mock_elevenlabs_happy)
+    def setup(self, mock_elevenlabs_api):
+        self.client = ElevenLabsClient(mock_elevenlabs_api)
 
     @pytest.mark.parametrize(
         "script, expected_key",
@@ -70,10 +70,10 @@ class TestElevenLabsClientGetDialogSuccess:
     """
 
     @pytest.fixture(autouse=True)
-    def setup(self, mock_elevenlabs_happy, sample_script):
-        self.client = ElevenLabsClient(mock_elevenlabs_happy)
+    def setup(self, mock_elevenlabs_api, sample_script):
+        self.client = ElevenLabsClient(mock_elevenlabs_api)
         self.result = self.client.get_dialog(sample_script)
-        self.mock = mock_elevenlabs_happy
+        self.mock = mock_elevenlabs_api
 
     def test_api_called_with_correct_parameters(
         self,
@@ -185,19 +185,19 @@ class TestElevenLabsClientVerifyVoices:
     user's API key may access all of the voices used in the script.
     """
 
-    def test_voices_available(self, sample_script, mock_elevenlabs_happy):
+    def test_voices_available(self, sample_script, mock_elevenlabs_api):
         """
         All voices in the script are available to the user's API key. The method
         should not raise and error.
         """
-        client = ElevenLabsClient(mock_elevenlabs_happy)
+        client = ElevenLabsClient(mock_elevenlabs_api)
         client._verify_voices(sample_script)
-        mock_elevenlabs_happy.voices.get_all.assert_called_once()
+        mock_elevenlabs_api.voices.get_all.assert_called_once()
 
     def test_voice_not_available(
         self,
         sample_script_unavailable_voice,
-        mock_elevenlabs_happy,
+        mock_elevenlabs_api,
         script_voice_id_3,
     ):
         """
@@ -205,8 +205,8 @@ class TestElevenLabsClientVerifyVoices:
         Should raise a `VoiceNotAvailableError` and the error message should
         contain the offending voice ID.
         """
-        client = ElevenLabsClient(mock_elevenlabs_happy)
+        client = ElevenLabsClient(mock_elevenlabs_api)
         with pytest.raises(VoiceNotAvailableError) as exception_info:
             client._verify_voices(sample_script_unavailable_voice)
-        mock_elevenlabs_happy.voices.get_all.assert_called_once()
+        mock_elevenlabs_api.voices.get_all.assert_called_once()
         assert script_voice_id_3 in exception_info.value.msg
