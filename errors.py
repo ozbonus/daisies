@@ -1,4 +1,4 @@
-class AudioDecodeError(ValueError):
+class AudioDecodeError(Exception):
     def __init__(self):
         self.msg = "Error decoding audio."
 
