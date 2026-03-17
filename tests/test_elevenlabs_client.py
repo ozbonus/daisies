@@ -1,8 +1,10 @@
 from unittest.mock import MagicMock
+
 import pytest
-from elevenlabs import DialogueInput, ElevenLabs, VoiceSegment
+from elevenlabs import DialogueInput, VoiceSegment
 from elevenlabs.types import ModelSettingsResponseModel
 from elevenlabs_client import DialogResponse, ElevenLabsClient
+
 from errors import AudioDecodeError, ElevenLabsClientError, VoiceNotAvailableError
 
 
@@ -86,7 +88,7 @@ class TestElevenLabsClientError:
     def test_raise_elevenlabs_client_error_on_unhandled_error(
         self,
         dialog_input_list: list[DialogueInput],
-        mock_api_unhandled_error: ElevenLabs,
+        mock_api_unhandled_error: MagicMock,
     ):
         client = ElevenLabsClient(mock_api_unhandled_error)
         with pytest.raises(ElevenLabsClientError) as exception_info:
