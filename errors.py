@@ -18,7 +18,8 @@ class ScriptError(ValueError):
 
 class ScriptKeyError(ValueError):
     def __init__(self, key: str):
-        self.msg = f"The scripts is missing the key: {key}"
+        self.msg = f"The script is missing the key: {key}"
+        super().__init__(self.msg)
 
 
 class VoiceNotAvailableError(ValueError):
