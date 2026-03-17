@@ -3,6 +3,7 @@ from pathlib import Path
 
 from elevenlabs import (
     AudioWithTimestampsAndVoiceSegmentsResponseModel,
+    DialogueInput,
     ElevenLabs,
     GetVoicesResponse,
     UnprocessableEntityError,
@@ -200,6 +201,19 @@ def sample_script_file_invalid_json(tmp_path) -> Path:
     script_file = tmp_path / "script.json"
     script_file.write_text("?")
     return script_file
+
+
+@pytest.fixture
+def dialog_input_list(
+    script_text_1: str,
+    script_text_2: str,
+    script_voice_id_1: str,
+    script_voice_id_2: str,
+) -> list[DialogueInput]:
+    return [
+        DialogueInput(text=script_text_1, voice_id=script_voice_id_1),
+        DialogueInput(text=script_text_2, voice_id=script_voice_id_2),
+    ]
 
 
 @pytest.fixture

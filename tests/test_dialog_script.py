@@ -1,4 +1,5 @@
 from json import JSONDecodeError
+from elevenlabs import DialogueInput
 from jsonschema import ValidationError
 import pytest
 
@@ -36,3 +37,10 @@ class TestDialogScriptLoadScript:
     def test_encoding_error(self, sample_script_encoding_error):
         with pytest.raises(UnicodeDecodeError):
             DialogScript(sample_script_encoding_error)
+
+
+class TestDialogScriptDialogInputsMethod:
+    def test_dialog_inputs(self, sample_script_file, dialog_input_list):
+        script = DialogScript(sample_script_file)
+        inputs = script.dialog_inputs()
+        assert inputs == dialog_input_list
