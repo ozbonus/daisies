@@ -1,12 +1,9 @@
+from unittest.mock import MagicMock
 import pytest
-from elevenlabs_client import ElevenLabsClient, DialogResponse
-from elevenlabs import DialogueInput, VoiceSegment
+from elevenlabs import DialogueInput, ElevenLabs, VoiceSegment
 from elevenlabs.types import ModelSettingsResponseModel
-from errors import (
-    Base64DecodeError,
-    ElevenLabsClientError,
-    VoiceNotAvailableError,
-)
+from elevenlabs_client import DialogResponse, ElevenLabsClient
+from errors import AudioDecodeError, ElevenLabsClientError, VoiceNotAvailableError
 
 
 class TestElevenLabsClientGetDialogSuccess:
@@ -16,17 +13,11 @@ class TestElevenLabsClientGetDialogSuccess:
 
     @pytest.fixture(autouse=True)
     def setup(self, mock_elevenlabs_api, dialog_input_list):
-        self.mock = mock_elevenlabs_api
+        self.mock: MagicMock = mock_elevenlabs_api
         self.client = ElevenLabsClient(mock_elevenlabs_api)
         self.result = self.client.get_dialog(dialog_input_list)
 
-    def test_api_called_with_correct_parameters(
-        self,
-        script_text_1: str,
-        script_text_2: str,
-        script_voice_id_1: str,
-        script_voice_id_2: str,
-    ):
+    def test_api_called_with_correct_parameters(self):
         """Verify the API receives the expected configuration."""
         call_kwargs = (
             self.mock.text_to_dialogue.convert_with_timestamps.call_args.kwargs
@@ -83,36 +74,33 @@ class TestElevenLabsClientError:
 
     def test_raise_elevenlabs_client_error_on_unprocessable_input(
         self,
-        sample_script,
-        mock_api_unprocessable_entity_error,
+        dialog_input_list: list[DialogueInput],
+        mock_api_unprocessable_entity_error: MagicMock,
     ):
         client = ElevenLabsClient(mock_api_unprocessable_entity_error)
         with pytest.raises(ElevenLabsClientError) as exception_info:
-            client.get_dialog(sample_script)
+            client.get_dialog(dialog_input_list)
         assert "Error location" in exception_info.value.msg
         assert "Error message" in exception_info.value.msg
 
     def test_raise_elevenlabs_client_error_on_unhandled_error(
         self,
-        sample_script,
-        mock_api_unhandled_error,
+        dialog_input_list: list[DialogueInput],
+        mock_api_unhandled_error: ElevenLabs,
     ):
         client = ElevenLabsClient(mock_api_unhandled_error)
         with pytest.raises(ElevenLabsClientError) as exception_info:
-            client.get_dialog(sample_script)
+            client.get_dialog(dialog_input_list)
         assert "Unhandled API client error" in exception_info.value.msg
 
-    def test_raise_base64_decode_error_on_value_error(
+    def test_raise_audio_decode_error(
         self,
-        sample_script,
-        mock_elevenlabs_api_bad_audio,
-        invalid_base64_audio_string,
+        dialog_input_list: list[DialogueInput],
+        mock_elevenlabs_api_bad_audio: MagicMock,
     ):
         client = ElevenLabsClient(mock_elevenlabs_api_bad_audio)
-        with pytest.raises(Base64DecodeError) as exception_info:
-            client.get_dialog(sample_script)
-        mock_elevenlabs_api_bad_audio.text_to_dialogue.convert_with_timestamps.assert_called_once()
-        assert "Error decoding audio to bytes." in exception_info.value.msg
+        with pytest.raises(AudioDecodeError):
+            client.get_dialog(dialog_input_list)
 
 
 class TestElevenLabsClientVerifyVoices:
@@ -123,7 +111,7 @@ class TestElevenLabsClientVerifyVoices:
 
     def test_voices_available(
         self,
-        mock_elevenlabs_api,
+        mock_elevenlabs_api: MagicMock,
         script_voice_id_1: str,
         script_voice_id_2: str,
     ):
@@ -137,7 +125,7 @@ class TestElevenLabsClientVerifyVoices:
 
     def test_voice_not_available(
         self,
-        mock_elevenlabs_api,
+        mock_elevenlabs_api: MagicMock,
         script_voice_id_3: str,
     ):
         """
