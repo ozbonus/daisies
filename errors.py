@@ -1,6 +1,7 @@
 class AudioDecodeError(Exception):
     def __init__(self):
         self.msg = "Error decoding audio."
+        super().__init__(self.msg)
 
 
 class ElevenLabsClientError(Exception):
