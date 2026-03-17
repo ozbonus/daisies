@@ -221,31 +221,6 @@ def dialog_input_list(
 
 
 @pytest.fixture
-def sample_script_unavailable_voice(
-    script_language_code: str,
-    script_country_code: str,
-    script_text_1: str,
-    script_text_2: str,
-    script_voice_id_1: str,
-    script_voice_id_3: str,
-) -> dict[str, object]:
-    """
-    This script contains a reference to a voice that is meant to be unavailable
-    to the user account associated with the API key, `script_voice_id_3.
-    """
-    return {
-        "locale": {
-            "languageCode": script_language_code,
-            "countryCode": script_country_code,
-        },
-        "lines": [
-            {"text": script_text_1, "voiceId": script_voice_id_1},
-            {"text": script_text_2, "voiceId": script_voice_id_3},
-        ],
-    }
-
-
-@pytest.fixture
 def invalid_base64_audio_string() -> str:
     """
     This is an invalid base-64 string because exclamation points are not within
