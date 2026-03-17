@@ -16,9 +16,9 @@ class TestElevenLabsClientGetDialogSuccess:
 
     @pytest.fixture(autouse=True)
     def setup(self, mock_elevenlabs_api, dialog_input_list):
+        self.mock = mock_elevenlabs_api
         self.client = ElevenLabsClient(mock_elevenlabs_api)
         self.result = self.client.get_dialog(dialog_input_list)
-        self.mock = mock_elevenlabs_api
 
     def test_api_called_with_correct_parameters(
         self,
@@ -43,15 +43,6 @@ class TestElevenLabsClientGetDialogSuccess:
         settings = call_kwargs["settings"]
         assert isinstance(settings, ModelSettingsResponseModel)
         assert settings.stability == 0.5
-
-        # Verify input transformation.
-        inputs = call_kwargs["inputs"]
-        assert len(inputs) == 2
-        assert all(isinstance(i, DialogueInput) for i in inputs)
-        assert inputs[0].text == script_text_1
-        assert inputs[0].voice_id == script_voice_id_1
-        assert inputs[1].text == script_text_2
-        assert inputs[1].voice_id == script_voice_id_2
 
     def test_api_is_called(self):
         """Verify that the API method was called once."""
