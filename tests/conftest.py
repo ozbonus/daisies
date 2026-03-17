@@ -210,6 +210,10 @@ def dialog_input_list(
     script_voice_id_1: str,
     script_voice_id_2: str,
 ) -> list[DialogueInput]:
+    """
+    A list of DialogueInput instances that should correspond to
+    `sample_script_file`.
+    """
     return [
         DialogueInput(text=script_text_1, voice_id=script_voice_id_1),
         DialogueInput(text=script_text_2, voice_id=script_voice_id_2),
