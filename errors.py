@@ -10,18 +10,6 @@ class ElevenLabsClientError(Exception):
         super().__init__(msg)
 
 
-class ScriptError(ValueError):
-    def __init__(self, msg: str):
-        self.msg = f"Script Error: {msg}"
-        super().__init__(msg)
-
-
-class ScriptKeyError(ValueError):
-    def __init__(self, key: str):
-        self.msg = f"The script is missing the key: {key}"
-        super().__init__(self.msg)
-
-
 class VoiceNotAvailableError(ValueError):
     """
     Raised when the script contains voice IDs that are not available to the user
