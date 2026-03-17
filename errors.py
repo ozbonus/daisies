@@ -1,6 +1,6 @@
-class Base64DecodeError(ValueError):
+class AudioDecodeError(ValueError):
     def __init__(self):
-        self.msg = "Error decoding audio to bytes."
+        self.msg = "Error decoding audio."
 
 
 class ElevenLabsClientError(Exception):

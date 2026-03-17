@@ -12,7 +12,7 @@ from elevenlabs import (
 from elevenlabs.client import ElevenLabs
 from elevenlabs.types import ModelSettingsResponseModel, VoiceSegment
 from errors import (
-    Base64DecodeError,
+    AudioDecodeError,
     ElevenLabsClientError,
     VoiceNotAvailableError,
 )
@@ -37,7 +37,20 @@ class ElevenLabsClient:
         self.api = api
 
     def _str_to_bytes(self, data: str) -> bytes:
-        return base64.b64decode(data, validate=True)
+        """
+        Convert the audio portion of a `DialogueResponse` from a base-64 string
+        to bytes.
+
+        Returns:
+            bytes: The spoken audio version of the script in MP3 format.
+        
+        Raises:
+            AudioDecodeError: The base-64 string cannot be converted to bytes.
+        """
+        try:
+            return base64.b64decode(data, validate=True)
+        except binascii.Error:
+            raise AudioDecodeError()
 
     def verify_voices(self, voice_ids: list[str]) -> None:
         """
@@ -85,10 +98,7 @@ class ElevenLabsClient:
         except Exception:
             raise ElevenLabsClientError(msg="Unhandled API client error")
 
-        try:
-            audio_data = self._str_to_bytes(result.audio_base_64)
-        except binascii.Error:
-            raise Base64DecodeError()
+        audio_data = self._str_to_bytes(result.audio_base_64)
 
         return DialogResponse(
             audio_data=audio_data,
