@@ -5,63 +5,8 @@ from elevenlabs.types import ModelSettingsResponseModel
 from errors import (
     Base64DecodeError,
     ElevenLabsClientError,
-    ScriptError,
-    ScriptKeyError,
     VoiceNotAvailableError,
 )
-
-
-class TestElevenLabsClientMakeInputSequenceSuccess:
-    """
-    Test the method for generating an input sequence from a script.
-    """
-
-    @pytest.fixture(autouse=True)
-    def setup(self, mock_elevenlabs_api, sample_script):
-        self.client = ElevenLabsClient(mock_elevenlabs_api)
-        self.result = self.client._make_input_sequence(sample_script)
-
-    def test_is_list(self):
-        assert isinstance(self.result, list)
-
-    def test_elements_are_dialog_input(self):
-        assert all(isinstance(i, DialogueInput) for i in self.result)
-
-    def test_values(
-        self,
-        script_text_1: str,
-        script_text_2: str,
-        script_voice_id_1: str,
-        script_voice_id_2: str,
-    ):
-        assert self.result[0].text == script_text_1
-        assert self.result[0].voice_id == script_voice_id_1
-        assert self.result[1].text == script_text_2
-        assert self.result[1].voice_id == script_voice_id_2
-
-
-class TestElevenLabsClientMakeInputSequenceErrors:
-    """
-    Test `_make_input_sequence` with various faulty inputs.
-    """
-
-    @pytest.fixture(autouse=True)
-    def setup(self, mock_elevenlabs_api):
-        self.client = ElevenLabsClient(mock_elevenlabs_api)
-
-    @pytest.mark.parametrize(
-        "script, expected_key",
-        [
-            ([{"bad_key": "blah", "voice_id": "blah"}], "text"),  # Bad key.
-            ([{"voice_id": "blah"}], "text"),  # Missing key.
-            ([{"text": "blah"}], "voice_id"),  # Missing key.
-            ([{}], "text"),  # Missing all keys.
-        ],
-    )
-    def test_raise_script_error(self, script, expected_key):
-        with pytest.raises(ScriptKeyError) as exception:
-            self.client._make_input_sequence(script)
-        assert expected_key in str(exception.value.msg)
 
 
 class TestElevenLabsClientGetDialogSuccess:
@@ -70,9 +15,9 @@ class TestElevenLabsClientGetDialogSuccess:
     """
 
     @pytest.fixture(autouse=True)
-    def setup(self, mock_elevenlabs_api, sample_script):
+    def setup(self, mock_elevenlabs_api, dialog_input_list):
         self.client = ElevenLabsClient(mock_elevenlabs_api)
-        self.result = self.client.get_dialog(sample_script)
+        self.result = self.client.get_dialog(dialog_input_list)
         self.mock = mock_elevenlabs_api
 
     def test_api_called_with_correct_parameters(
@@ -185,20 +130,24 @@ class TestElevenLabsClientVerifyVoices:
     user's API key may access all of the voices used in the script.
     """
 
-    def test_voices_available(self, sample_script, mock_elevenlabs_api):
+    def test_voices_available(
+        self,
+        mock_elevenlabs_api,
+        script_voice_id_1: str,
+        script_voice_id_2: str,
+    ):
         """
         All voices in the script are available to the user's API key. The method
         should not raise and error.
         """
         client = ElevenLabsClient(mock_elevenlabs_api)
-        client._verify_voices(sample_script)
+        client.verify_voices([script_voice_id_1, script_voice_id_2])
         mock_elevenlabs_api.voices.get_all.assert_called_once()
 
     def test_voice_not_available(
         self,
-        sample_script_unavailable_voice,
         mock_elevenlabs_api,
-        script_voice_id_3,
+        script_voice_id_3: str,
     ):
         """
         The script contains one voice that is not available to the user's API.
@@ -207,6 +156,6 @@ class TestElevenLabsClientVerifyVoices:
         """
         client = ElevenLabsClient(mock_elevenlabs_api)
         with pytest.raises(VoiceNotAvailableError) as exception_info:
-            client._verify_voices(sample_script_unavailable_voice)
+            client.verify_voices([script_voice_id_3])
         mock_elevenlabs_api.voices.get_all.assert_called_once()
         assert script_voice_id_3 in exception_info.value.msg

@@ -2,21 +2,18 @@ import base64
 import binascii
 import os
 from dataclasses import dataclass
-from typing import Dict, List
 
 from dotenv import load_dotenv
 from elevenlabs import (
     DialogueInput,
     GetVoicesResponse,
     UnprocessableEntityError,
-    Voice,
 )
 from elevenlabs.client import ElevenLabs
 from elevenlabs.types import ModelSettingsResponseModel, VoiceSegment
 from errors import (
     Base64DecodeError,
     ElevenLabsClientError,
-    ScriptKeyError,
     VoiceNotAvailableError,
 )
 
@@ -28,7 +25,7 @@ class DialogResponse:
     """
 
     audio_data: bytes
-    segments: List[VoiceSegment]
+    segments: list[VoiceSegment]
 
 
 class ElevenLabsClient:
@@ -42,48 +39,29 @@ class ElevenLabsClient:
     def _str_to_bytes(self, data: str) -> bytes:
         return base64.b64decode(data, validate=True)
 
-    def _verify_voices(self, script: List[Dict[str, str]]) -> None:
+    def verify_voices(self, voice_ids: list[str]) -> None:
         """
         Verify that the user associated with the API key has access to all of
-        the voices used in the script. If not, raise a VoiceNotAvailableError.
+        the voices used in the script.
 
         Note that this application is made on a shoe string budget and assumes
         that the user's account is not of a level that can keep a large library
         of voices. As such, the page size, which is set the maximum value of
         100, should be more than large enough to get the full voice library of
         the user.
+
+        Raises:
+            VoiceNotAvailableError: One or more unavailable voices are used.
         """
-        user_voices: list[str] = []
-        unavailable_voices: list[str] = []
 
         voices_query: GetVoicesResponse = self.api.voices.get_all()
-        for voice in voices_query.voices:
-            user_voices.append(voice.voice_id)
-
-        for line in script:
-            voice_id = line["voice_id"]
-            if voice_id not in user_voices:
-                unavailable_voices.append(voice_id)
+        user_voices: list[str] = [voice.voice_id for voice in voices_query.voices]
+        unavailable_voices = [v for v in voice_ids if v not in user_voices]
 
         if unavailable_voices:
             raise VoiceNotAvailableError(unavailable_voices)
 
-    def _make_input_sequence(self, script: List[Dict[str, str]]) -> List[DialogueInput]:
-        try:
-            inputs = []
-            for line in script:
-                text = line["text"]
-                voice_id = line["voice_id"]
-                input = DialogueInput(text=text, voice_id=voice_id)
-                inputs.append(input)
-            return inputs
-        except KeyError as error:
-            missing_key: str = error.args[0]
-            raise ScriptKeyError(key=missing_key)
-
-    def get_dialog(self, script: List[Dict[str, str]]) -> DialogResponse:
-        dialog_input_sequence = self._make_input_sequence(script)
-
+    def get_dialog(self, inputs: list[DialogueInput]) -> DialogResponse:
         settings = ModelSettingsResponseModel(stability=0.5)
 
         try:
@@ -94,7 +72,7 @@ class ElevenLabsClient:
                 language_code="en",
                 pronunciation_dictionary_locators=[],
                 apply_text_normalization="auto",
-                inputs=dialog_input_sequence,
+                inputs=inputs,
             )
         except UnprocessableEntityError as error:
             if hasattr(error.body, "detail") and error.body.detail:
