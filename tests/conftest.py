@@ -1,6 +1,9 @@
 import json
+import os
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
+import pytest
 from elevenlabs import (
     AudioWithTimestampsAndVoiceSegmentsResponseModel,
     DialogueInput,
@@ -10,9 +13,6 @@ from elevenlabs import (
     Voice,
     VoiceSegment,
 )
-import pytest
-from unittest.mock import MagicMock, patch
-import os
 
 
 @pytest.fixture(autouse=True)

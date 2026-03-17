@@ -1,18 +1,12 @@
 import base64
 import binascii
+
 from dataclasses import dataclass
-from elevenlabs import (
-    DialogueInput,
-    GetVoicesResponse,
-    UnprocessableEntityError,
-)
+from elevenlabs import DialogueInput, UnprocessableEntityError
 from elevenlabs.client import ElevenLabs
 from elevenlabs.types import ModelSettingsResponseModel, VoiceSegment
-from errors import (
-    AudioDecodeError,
-    ElevenLabsClientError,
-    VoiceNotAvailableError,
-)
+
+from errors import AudioDecodeError, ElevenLabsClientError, VoiceNotAvailableError
 
 
 @dataclass
