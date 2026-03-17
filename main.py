@@ -1,16 +1,11 @@
-from pathlib import Path
-from elevenlabs_client import eleven_labs_client, DialogResponse
-from errors import ElevenLabsClientError
+import os
+from dotenv import load_dotenv
+from elevenlabs import ElevenLabs
+from elevenlabs_client import ElevenLabsClient
 
 
-
-def write_audio(
-    dialog_response: DialogResponse,
-    output_filename: str = "output.mp3",
-) -> Path:
-    output_path = Path(__file__).parent / output_filename
-    output_path.write_bytes(dialog_response.audio_data)
-    return output_path
+def write_audio():
+    pass
 
 
 def write_segments():
@@ -18,22 +13,12 @@ def write_segments():
 
 
 def main():
-    inputs = [
-        {
-            "text": "[meows] I am a cat.",
-            "voice_id": "BIvP0GN1cAtSRTxNHnWS",
-        },
-        {
-            "text": "[high pitched] Tweet tweet! I am a bird.",
-            "voice_id": "kmSVBPu7loj4ayNinwWM",
-        },
-    ]
-
-    response = eleven_labs_client.get_dialog(inputs)
-    if isinstance(response, DialogResponse):
-        print(response.segments)
-    if isinstance(response, ElevenLabsClientError):
-        print(response.msg)
+    load_dotenv()
+    api = ElevenLabs(
+        base_url="https://api.elevenlabs.io",
+        api_key=os.getenv("API_KEY"),
+    )
+    client = ElevenLabsClient(api=api)
 
 
 if __name__ == "__main__":

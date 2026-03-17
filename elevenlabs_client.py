@@ -1,9 +1,6 @@
 import base64
 import binascii
-import os
 from dataclasses import dataclass
-
-from dotenv import load_dotenv
 from elevenlabs import (
     DialogueInput,
     GetVoicesResponse,
@@ -43,7 +40,7 @@ class ElevenLabsClient:
 
         Returns:
             bytes: The spoken audio version of the script in MP3 format.
-        
+
         Raises:
             AudioDecodeError: The base-64 string cannot be converted to bytes.
         """
@@ -104,11 +101,3 @@ class ElevenLabsClient:
             audio_data=audio_data,
             segments=result.voice_segments,
         )
-
-
-load_dotenv()
-api = ElevenLabs(
-    base_url="https://api.elevenlabs.io",
-    api_key=os.getenv("API_KEY"),
-)
-eleven_labs_client = ElevenLabsClient(api=api)
