@@ -88,19 +88,17 @@ def main():
         base_url="https://api.elevenlabs.io",
         api_key=get_api_key(),
     )
-
     client = ElevenLabsClient(api)
+
     scripts = decide_files_to_write(
         inputs=inputs,
         overwrite=overwrite,
         write_dir=write_dir,
     )
     dialog_scripts = [DialogScript(path) for path in scripts]
-    client.verify_voices(
-        list(
-            {voice for script in dialog_scripts for voice in script.voices},
-        )
-    )
+
+    voices = {voice for script in dialog_scripts for voice in script.voices}
+    client.verify_voices(list(voices))
 
     for script in dialog_scripts:
         output = client.get_dialog(inputs=script.dialog_inputs)
