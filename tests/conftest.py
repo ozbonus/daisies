@@ -42,6 +42,16 @@ def script_text_2() -> str:
 
 
 @pytest.fixture
+def script_speaker_1() -> str:
+    return "Gandalf"
+
+
+@pytest.fixture
+def script_speaker_2() -> str:
+    return "Bilbo"
+
+
+@pytest.fixture
 def script_voice_id_1() -> str:
     return "abc123"
 
@@ -72,6 +82,8 @@ def sample_script(
     script_country_code: str,
     script_text_1: str,
     script_text_2: str,
+    script_speaker_1: str,
+    script_speaker_2: str,
     script_voice_id_1: str,
     script_voice_id_2: str,
 ) -> dict[str, object]:
@@ -86,10 +98,12 @@ def sample_script(
         "lines": [
             {
                 "text": script_text_1,
+                "speaker": script_speaker_1,
                 "voiceId": script_voice_id_1,
             },
             {
                 "text": script_text_2,
+                "speaker": script_speaker_2,
                 "voiceId": script_voice_id_2,
             },
         ],
@@ -103,6 +117,8 @@ def sample_script_file(
     script_country_code: str,
     script_text_1: str,
     script_text_2: str,
+    script_speaker_1: str,
+    script_speaker_2: str,
     script_voice_id_1: str,
     script_voice_id_2: str,
 ) -> Path:
@@ -114,10 +130,12 @@ def sample_script_file(
         "lines": [
             {
                 "text": script_text_1,
+                "speaker": script_speaker_1,
                 "voiceId": script_voice_id_1,
             },
             {
                 "text": script_text_2,
+                "speaker": script_speaker_2,
                 "voiceId": script_voice_id_2,
             },
         ],
@@ -133,6 +151,8 @@ def sample_script_file_no_country_code(
     script_language_code: str,
     script_text_1: str,
     script_text_2: str,
+    script_speaker_1: str,
+    script_speaker_2: str,
     script_voice_id_1: str,
     script_voice_id_2: str,
 ) -> Path:
@@ -143,10 +163,12 @@ def sample_script_file_no_country_code(
         "lines": [
             {
                 "text": script_text_1,
+                "speaker": script_speaker_1,
                 "voiceId": script_voice_id_1,
             },
             {
                 "text": script_text_2,
+                "speaker": script_speaker_2,
                 "voiceId": script_voice_id_2,
             },
         ],
@@ -161,6 +183,8 @@ def sample_script_schema_violation(
     tmp_path,
     script_text_1: str,
     script_text_2: str,
+    script_speaker_1: str,
+    script_speaker_2: str,
     script_voice_id_1: str,
     script_voice_id_2: str,
 ) -> Path:
@@ -171,10 +195,12 @@ def sample_script_schema_violation(
         "lines": [
             {
                 "text": script_text_1,
+                "speaker": script_speaker_1,
                 "voiceId": script_voice_id_1,
             },
             {
                 "text": script_text_2,
+                "speaker": script_speaker_2,
                 "voiceId": script_voice_id_2,
             },
         ],
