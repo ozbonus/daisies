@@ -46,10 +46,10 @@ def parse_args() -> list[Path]:
         write_dir = path
     else:
         parser.error(f"Input must be a file or directory, not: {path}")
-    
+
     if not os.access(write_dir, os.W_OK):
         parser.error(f"No write permission in directory: {write_dir}")
-    
+
     return scripts
 
 
@@ -69,10 +69,16 @@ def main():
         api_key=os.getenv("API_KEY"),
     )
 
-    for path in scripts:
-        script = DialogScript(path)
-        client = ElevenLabsClient(api=api)
-        output = client.get_dialog(inputs=script.dialog_inputs())
+    client = ElevenLabsClient(api)
+    dialog_scripts = [DialogScript(path) for path in scripts]
+    client.verify_voices(
+        list(
+            {voice for script in dialog_scripts for voice in script.voices},
+        )
+    )
+
+    for script in dialog_scripts:
+        output = client.get_dialog(inputs=script.dialog_inputs)
 
 
 if __name__ == "__main__":
