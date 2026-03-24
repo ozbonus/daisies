@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from elevenlabs import ElevenLabs
 from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
+from errors import VoiceNotAvailableError
 
 
 def parse_args() -> tuple[list[Path], bool, Path]:
@@ -100,7 +101,10 @@ def main():
     dialog_scripts = [DialogScript(path) for path in scripts]
 
     voices = {voice for script in dialog_scripts for voice in script.voices}
-    client.verify_voices(list(voices))
+    try:
+        client.verify_voices(list(voices))
+    except VoiceNotAvailableError as e:
+        raise SystemExit(e)
 
     write_dir.mkdir(exist_ok=True)
 
