@@ -21,8 +21,9 @@ class DialogScript:
         self.language_code = self.data["locale"]["languageCode"]
         self.country_code = self.data["locale"].get("countryCode")
 
-    def voices(self) -> tuple[str, ...]:
-        return tuple(line["voiceId"] for line in self.data["lines"])
+    @property
+    def voices(self) -> set[str]:
+        return {line["voiceId"] for line in self.data["lines"]}
 
     def dialog_inputs(self) -> list[DialogueInput]:
         return [

@@ -43,8 +43,8 @@ class TestDialogScriptVoicesMethod:
         script_voice_id_2,
     ):
         script = DialogScript(sample_script_file)
-        voices = script.voices()
-        expected: tuple[str, ...] = (script_voice_id_1, script_voice_id_2)
+        voices = script.voices
+        expected: set[str] = {script_voice_id_1, script_voice_id_2}
         assert voices == expected
 
 
