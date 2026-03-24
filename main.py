@@ -97,7 +97,7 @@ def main():
         write_dir=write_dir,
     )
     if not scripts:
-        SystemExit("All input files have corresponding outputs and overwriting was not enabled")
+        raise SystemExit("All input files have corresponding outputs and overwriting was not enabled")
     dialog_scripts = [DialogScript(path) for path in scripts]
 
     voices = {voice for script in dialog_scripts for voice in script.voices}
