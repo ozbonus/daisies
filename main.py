@@ -54,6 +54,13 @@ def parse_args() -> tuple[list[Path], bool, Path]:
     return scripts, overwrite, write_dir
 
 
+def get_api_key() -> str:
+    api_key = os.getenv("API_KEY")
+    if not api_key:
+        raise SystemExit("API key not found in environment")
+    return api_key
+
+
 def decide_files_to_write(
     inputs: list[Path],
     overwrite: bool,
@@ -76,9 +83,10 @@ def write_segments():
 def main():
     inputs, overwrite, write_dir = parse_args()
     load_dotenv()
+
     api = ElevenLabs(
         base_url="https://api.elevenlabs.io",
-        api_key=os.getenv("API_KEY"),
+        api_key=get_api_key(),
     )
 
     client = ElevenLabsClient(api)
