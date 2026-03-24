@@ -16,6 +16,7 @@ class TestDialogScriptLoadScript:
         script = DialogScript(sample_script_file)
         assert script is not None
         assert script.path == sample_script_file
+        assert script.stem == sample_script_file.stem
         assert script.language_code == script_language_code
         assert script.country_code == script_country_code
 

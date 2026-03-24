@@ -23,8 +23,12 @@ class DialogScript:
         self.country_code = self.data["locale"].get("countryCode")
 
     @property
-    def path(self) -> str | Path:
+    def path(self) -> Path:
         return self.file
+    
+    @property
+    def stem(self) -> str:
+        return self.file.stem
 
     @property
     def voices(self) -> set[str]:
