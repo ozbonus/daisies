@@ -8,7 +8,7 @@ from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
 
 
-def parse_args() -> list[Path]:
+def parse_args() -> tuple[list[Path], bool]:
     parser = argparse.ArgumentParser(
         prog="daisies",
         description="A utility for generating audio and timestamps from text dialog scripts.",
@@ -30,6 +30,7 @@ def parse_args() -> list[Path]:
 
     args = parser.parse_args()
     path: Path = args.input
+    overwrite: bool = args.overwrite
 
     if not path.exists():
         parser.error(f"Not found: {path}")
@@ -50,7 +51,7 @@ def parse_args() -> list[Path]:
     if not os.access(write_dir, os.W_OK):
         parser.error(f"No write permission in directory: {write_dir}")
 
-    return scripts
+    return scripts, overwrite
 
 
 def write_audio():
@@ -62,7 +63,7 @@ def write_segments():
 
 
 def main():
-    scripts = parse_args()
+    scripts, overwrite = parse_args()
     load_dotenv()
     api = ElevenLabs(
         base_url="https://api.elevenlabs.io",
@@ -79,6 +80,7 @@ def main():
 
     for script in dialog_scripts:
         output = client.get_dialog(inputs=script.dialog_inputs)
+        print(output.segments)
 
 
 if __name__ == "__main__":
