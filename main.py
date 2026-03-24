@@ -17,7 +17,14 @@ def parse_args() -> list[Path]:
     )
 
     parser.add_argument(
-        "input", type=Path, help="A JSON script or directory that contains JSON scripts"
+        "input", type=Path, help="a JSON script or directory that contains JSON scripts"
+    )
+
+    parser.add_argument(
+        "-o",
+        "--overwrite",
+        action="store_true",
+        help="overwrite existing files",
     )
 
     args = parser.parse_args()
@@ -54,15 +61,11 @@ def main():
         base_url="https://api.elevenlabs.io",
         api_key=os.getenv("API_KEY"),
     )
-    
+
     for path in scripts:
         script = DialogScript(path)
         client = ElevenLabsClient(api=api)
-        output = client.get_dialog(
-            inputs=script.dialog_inputs()
-        )
-
-    
+        output = client.get_dialog(inputs=script.dialog_inputs())
 
 
 if __name__ == "__main__":
