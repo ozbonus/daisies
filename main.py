@@ -38,14 +38,20 @@ def parse_args() -> list[Path]:
     if path.is_file():
         if path.suffix.lower() != ".json":
             parser.error(f"Expected JSON file, but got: {path}")
-        return [path]
+        write_dir = path.parent
+        scripts = [path]
     elif path.is_dir():
         scripts = list({*path.glob("*.json"), *path.glob("*.JSON")})
         if not scripts:
             parser.error(f"No JSON files found in directory: {path}")
-        return scripts
+        write_dir = path
     else:
         parser.error(f"Input must be a file or directory, not: {path}")
+    
+    if not os.access(write_dir, os.W_OK):
+        parser.error(f"No write permission in directory: {write_dir}")
+    
+    return scripts
 
 
 def write_audio():
