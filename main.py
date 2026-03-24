@@ -5,6 +5,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from elevenlabs import ElevenLabs
+from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
 
 
@@ -47,13 +48,21 @@ def write_segments():
 
 
 def main():
-    parse_args()
+    scripts = parse_args()
     load_dotenv()
     api = ElevenLabs(
         base_url="https://api.elevenlabs.io",
         api_key=os.getenv("API_KEY"),
     )
-    client = ElevenLabsClient(api=api)
+    
+    for path in scripts:
+        script = DialogScript(path)
+        client = ElevenLabsClient(api=api)
+        output = client.get_dialog(
+            inputs=script.dialog_inputs()
+        )
+
+    
 
 
 if __name__ == "__main__":
