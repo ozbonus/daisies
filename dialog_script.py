@@ -25,6 +25,7 @@ class DialogScript:
     def voices(self) -> set[str]:
         return {line["voiceId"] for line in self.data["lines"]}
 
+    @property
     def dialog_inputs(self) -> list[DialogueInput]:
         return [
             DialogueInput(text=line["text"], voice_id=line["voiceId"])
