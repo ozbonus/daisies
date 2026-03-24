@@ -1,4 +1,5 @@
 from json import JSONDecodeError
+from pathlib import Path
 from jsonschema import ValidationError
 import pytest
 
@@ -8,12 +9,13 @@ from dialog_script import DialogScript
 class TestDialogScriptLoadScript:
     def test_complete_script(
         self,
-        sample_script_file,
+        sample_script_file: Path,
         script_language_code,
         script_country_code,
     ):
         script = DialogScript(sample_script_file)
         assert script is not None
+        assert script.path == sample_script_file
         assert script.language_code == script_language_code
         assert script.country_code == script_country_code
 

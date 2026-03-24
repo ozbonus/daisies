@@ -15,11 +15,16 @@ class DialogScript:
             UnicodeDecodeError: Data is not encoded using UTF-8, UTF-16, UTF-32.
             ValidationError: The JSON doesn't follow the defined schema.
         """
+        self.file = file
         with open(file) as f:
             self.data = json.load(f)
         validate(self.data, schema=INPUT)
         self.language_code = self.data["locale"]["languageCode"]
         self.country_code = self.data["locale"].get("countryCode")
+
+    @property
+    def path(self) -> str | Path:
+        return self.file
 
     @property
     def voices(self) -> set[str]:
