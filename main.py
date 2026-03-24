@@ -54,6 +54,17 @@ def parse_args() -> tuple[list[Path], bool, Path]:
     return scripts, overwrite, write_dir
 
 
+def decide_files_to_write(
+    inputs: list[Path],
+    overwrite: bool,
+    write_dir: Path,
+) -> list[Path]:
+    if overwrite or not write_dir.exists():
+        return inputs
+    existing_stems = {file.stem for file in write_dir.iterdir()}
+    return [path for path in inputs if path.stem not in existing_stems]
+
+
 def write_audio():
     pass
 
@@ -63,7 +74,7 @@ def write_segments():
 
 
 def main():
-    scripts, overwrite, write_dir = parse_args()
+    inputs, overwrite, write_dir = parse_args()
     load_dotenv()
     api = ElevenLabs(
         base_url="https://api.elevenlabs.io",
@@ -71,6 +82,11 @@ def main():
     )
 
     client = ElevenLabsClient(api)
+    scripts = decide_files_to_write(
+        inputs=inputs,
+        overwrite=overwrite,
+        write_dir=write_dir,
+    )
     dialog_scripts = [DialogScript(path) for path in scripts]
     client.verify_voices(
         list(
