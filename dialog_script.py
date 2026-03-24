@@ -6,7 +6,7 @@ from json_schema import INPUT
 
 
 class DialogScript:
-    def __init__(self, file: str | Path):
+    def __init__(self, file: Path):
         """
         Load and validate a JSON-formatted dialog script.
 
