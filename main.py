@@ -8,7 +8,7 @@ from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
 
 
-def parse_args() -> tuple[list[Path], bool]:
+def parse_args() -> tuple[list[Path], bool, Path]:
     parser = argparse.ArgumentParser(
         prog="daisies",
         description="A utility for generating audio and timestamps from text dialog scripts.",
@@ -51,7 +51,7 @@ def parse_args() -> tuple[list[Path], bool]:
     if not os.access(write_dir, os.W_OK):
         parser.error(f"No write permission in directory: {write_dir}")
 
-    return scripts, overwrite
+    return scripts, overwrite, write_dir
 
 
 def write_audio():
@@ -63,7 +63,7 @@ def write_segments():
 
 
 def main():
-    scripts, overwrite = parse_args()
+    scripts, overwrite, write_dir = parse_args()
     load_dotenv()
     api = ElevenLabs(
         base_url="https://api.elevenlabs.io",
