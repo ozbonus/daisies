@@ -17,7 +17,9 @@ def parse_args() -> list[Path]:
     )
 
     parser.add_argument(
-        "input", type=Path, help="a JSON script or directory that contains JSON scripts"
+        "input",
+        type=Path,
+        help="a JSON script or directory that contains JSON scripts",
     )
 
     parser.add_argument(
