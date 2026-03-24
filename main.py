@@ -95,13 +95,19 @@ def main():
         overwrite=overwrite,
         write_dir=write_dir,
     )
+    if not scripts:
+        SystemExit("All input files have corresponding outputs and overwriting was not enabled")
     dialog_scripts = [DialogScript(path) for path in scripts]
 
     voices = {voice for script in dialog_scripts for voice in script.voices}
     client.verify_voices(list(voices))
 
+    write_dir.mkdir(exist_ok=True)
+
     for script in dialog_scripts:
         output = client.get_dialog(inputs=script.dialog_inputs)
+        audio_path = write_dir / f"{script.stem}.mp3"
+        audio_path.write_bytes(output.audio_data)
         print(output.segments)
 
 
