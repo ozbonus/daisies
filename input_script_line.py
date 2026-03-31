@@ -4,5 +4,5 @@ from dataclasses import dataclass
 @dataclass
 class InputScriptLine:
     speaker: str | None
-    voiceId: str
+    voice_id: str
     text: str
