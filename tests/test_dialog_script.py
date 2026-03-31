@@ -56,3 +56,44 @@ class TestDialogScriptDialogInputsMethod:
         script = DialogScript(sample_script_file)
         inputs = script.dialog_inputs
         assert inputs == dialog_input_list
+
+
+class TestDialogScriptLinesProperty:
+    def test_lines(
+        self,
+        sample_script_file,
+        script_speaker_1,
+        script_voice_id_1,
+        script_text_1,
+        script_speaker_2,
+        script_voice_id_2,
+        script_text_2,
+    ):
+        script = DialogScript(sample_script_file)
+        lines = script.lines
+        assert len(lines) == 2
+        assert lines[0].speaker == script_speaker_1
+        assert lines[0].voice_id == script_voice_id_1
+        assert lines[0].text == script_text_1
+        assert lines[1].speaker == script_speaker_2
+        assert lines[1].voice_id == script_voice_id_2
+        assert lines[1].text == script_text_2
+
+    def test_lines_no_speaker(
+        self,
+        sample_script_file_no_first_speaker,
+        script_voice_id_1,
+        script_text_1,
+        script_speaker_2,
+        script_voice_id_2,
+        script_text_2,
+    ):
+        script = DialogScript(sample_script_file_no_first_speaker)
+        lines = script.lines
+        assert len(lines) == 2
+        assert lines[0].speaker is None
+        assert lines[0].voice_id == script_voice_id_1
+        assert lines[0].text == script_text_1
+        assert lines[1].speaker == script_speaker_2
+        assert lines[1].voice_id == script_voice_id_2
+        assert lines[1].text == script_text_2

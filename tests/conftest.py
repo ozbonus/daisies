@@ -179,6 +179,39 @@ def sample_script_file_no_country_code(
 
 
 @pytest.fixture
+def sample_script_file_no_first_speaker(
+    tmp_path,
+    script_language_code: str,
+    script_country_code: str,
+    script_text_1: str,
+    script_text_2: str,
+    script_speaker_2: str,
+    script_voice_id_1: str,
+    script_voice_id_2: str,
+) -> Path:
+    script = {
+        "locale": {
+            "languageCode": script_language_code,
+            "countryCode": script_country_code,
+        },
+        "lines": [
+            {
+                "text": script_text_1,
+                "voiceId": script_voice_id_1,
+            },
+            {
+                "text": script_text_2,
+                "speaker": script_speaker_2,
+                "voiceId": script_voice_id_2,
+            },
+        ],
+    }
+    script_file = tmp_path / "script.json"
+    script_file.write_text(json.dumps(script))
+    return script_file
+
+
+@pytest.fixture
 def sample_script_schema_violation(
     tmp_path,
     script_text_1: str,

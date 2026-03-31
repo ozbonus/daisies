@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from elevenlabs import DialogueInput
 from jsonschema import validate
+from input_script_line import InputScriptLine
 from json_schema import INPUT
 
 
@@ -25,7 +26,7 @@ class DialogScript:
     @property
     def path(self) -> Path:
         return self.file
-    
+
     @property
     def stem(self) -> str:
         """
@@ -41,5 +42,16 @@ class DialogScript:
     def dialog_inputs(self) -> list[DialogueInput]:
         return [
             DialogueInput(text=line["text"], voice_id=line["voiceId"])
+            for line in self.data["lines"]
+        ]
+
+    @property
+    def lines(self) -> list[InputScriptLine]:
+        return [
+            InputScriptLine(
+                speaker=line.get("speaker"),
+                voice_id=line["voiceId"],
+                text=line["text"],
+            )
             for line in self.data["lines"]
         ]
