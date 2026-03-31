@@ -20,8 +20,8 @@ class DialogScript:
         with open(file) as f:
             self.data = json.load(f)
         validate(self.data, schema=INPUT)
-        self.language_code = self.data["locale"]["languageCode"]
-        self.country_code = self.data["locale"].get("countryCode")
+        self.language_code: str = self.data["locale"]["languageCode"]
+        self.country_code: str | None = self.data["locale"].get("countryCode")
 
     @property
     def path(self) -> Path:
