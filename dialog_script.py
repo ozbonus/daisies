@@ -28,6 +28,9 @@ class DialogScript:
     
     @property
     def stem(self) -> str:
+        """
+        The stem of the file path of the input script.
+        """
         return self.file.stem
 
     @property
