@@ -17,10 +17,10 @@ INPUT = {
                 "type": "object",
                 "properties": {
                     "text": {"type": "string"},
-                    "speaker": {"type": "string"},
+                    "speaker": {"type": ["string", "null"]},
                     "voiceId": {"type": "string"},
                 },
-                "required": ["text", "speaker", "voiceId"],
+                "required": ["text", "voiceId"],
                 "additionalProperties": False,
             },
         },
