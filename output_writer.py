@@ -4,6 +4,11 @@ from dialog_script import DialogScript
 from elevenlabs_client import DialogResponse
 
 
+class LineTiming(NamedTuple):
+    start: int
+    end: int
+
+
 class OutputWriter:
     """
     A class that handles writing JSON scripts and audio files that are
