@@ -52,6 +52,8 @@ class OutputWriter:
                     "speaker": line.speaker,
                     "text": line.text,
                 }
+                # It's crucial that `input_lines` and `timings` be equal length,
+                # but that is checked for before reaching this point.
                 for line, timing in zip(input_lines, timings)
             ],
         }
