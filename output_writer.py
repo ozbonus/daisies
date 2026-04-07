@@ -24,8 +24,8 @@ class OutputWriter:
         self.write_dir = write_dir
         self.input_script = input_script
         self.response = response
-        self.audio_write_path = write_dir / f"{input_script.stem}"
-        self.script_write_path = write_dir / f"{input_script.stem}"
+        self.audio_write_path = write_dir / f"{input_script.stem}.mp3"
+        self.script_write_path = write_dir / f"{input_script.stem}.json"
 
     def _build_output_script(self) -> None:
         language_code = self.input_script.language_code
