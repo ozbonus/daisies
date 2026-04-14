@@ -1,12 +1,26 @@
 from pathlib import Path
 
+from jsonschema import ValidationError
 import pytest
 from pytest import FixtureRequest
 
 from dialog_script import DialogScript
 from elevenlabs_client import DialogResponse
 from output_writer import LineTiming, OutputWriter
-from tests.helpers import LANGUAGE_CODE, make_output_script
+from tests.helpers import (
+    COUNTRY_CODE,
+    END_TIME_1,
+    END_TIME_2,
+    LANGUAGE_CODE,
+    OMIT,
+    SPEAKER_1,
+    SPEAKER_2,
+    START_TIME_1,
+    START_TIME_2,
+    TEXT_1,
+    TEXT_2,
+    make_output_script,
+)
 
 
 def test_line_timing() -> None:
@@ -82,7 +96,76 @@ class TestOutputScriptValidation:
             response=dialog_response,
         )
 
-    def test_full_script(self) -> None:
+    def test_script_maker_helper(self) -> None:
         script = make_output_script()
-        self.writer._validate_output_script(script)
         assert script["locale"]["languageCode"] == LANGUAGE_CODE
+        assert script["locale"]["countryCode"] == COUNTRY_CODE
+        assert script["lines"][0]["startTime"] == START_TIME_1
+        assert script["lines"][0]["endTime"] == END_TIME_1
+        assert script["lines"][0]["speaker"] == SPEAKER_1
+        assert script["lines"][0]["text"] == TEXT_1
+        assert script["lines"][1]["startTime"] == START_TIME_2
+        assert script["lines"][1]["endTime"] == END_TIME_2
+        assert script["lines"][1]["speaker"] == SPEAKER_2
+        assert script["lines"][1]["text"] == TEXT_2
+
+    def test_validate_complete_script(self) -> None:
+        self.writer._validate_output_script(
+            output_script=make_output_script(),
+        )
+
+    def test_no_country_code(self) -> None:
+        self.writer._validate_output_script(
+            output_script=make_output_script(
+                country_code=OMIT,
+            ),
+        )
+
+    def test_missing_one_timing(self) -> None:
+        self.writer._validate_output_script(
+            output_script=make_output_script(start_time_1=OMIT),
+        )
+
+    def test_no_timings(self) -> None:
+        self.writer._validate_output_script(
+            output_script=make_output_script(
+                start_time_1=OMIT,
+                start_time_2=OMIT,
+                end_time_1=OMIT,
+                end_time_2=OMIT,
+            ),
+        )
+
+    def test_no_language_code(self) -> None:
+        with pytest.raises(ValidationError):
+            self.writer._validate_output_script(
+                output_script=make_output_script(
+                    language_code=OMIT,
+                ),
+            )
+
+    def test_no_lines(self) -> None:
+        output_script = make_output_script()
+        output_script["lines"] = []
+        with pytest.raises(ValidationError):
+            self.writer._validate_output_script(
+                output_script=output_script,
+            )
+
+    def test_no_speakers(self) -> None:
+        with pytest.raises(ValidationError):
+            self.writer._validate_output_script(
+                output_script=make_output_script(
+                    speaker_1=OMIT,
+                    speaker_2=OMIT,
+                ),
+            )
+
+    def test_no_text(self) -> None:
+        with pytest.raises(ValidationError):
+            self.writer._validate_output_script(
+                output_script=make_output_script(
+                    text_1=OMIT,
+                    text_2=OMIT,
+                ),
+            )
