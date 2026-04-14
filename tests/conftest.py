@@ -14,11 +14,19 @@ from elevenlabs import (
     VoiceSegment,
 )
 
+from dialog_script import DialogScript
+from elevenlabs_client import DialogResponse
+
 
 @pytest.fixture(autouse=True)
 def mock_env_vars():
     with patch.dict(os.environ, {"API_KEY": "FNORD123"}):
         yield
+
+
+@pytest.fixture(autouse=True)
+def write_dir(tmp_path: Path) -> Path:
+    return tmp_path
 
 
 @pytest.fixture
@@ -315,6 +323,33 @@ def voice_segments(
             dialogue_input_index=1,
         ),
     ]
+
+
+@pytest.fixture
+def dialog_response(voice_segments: list[VoiceSegment]) -> DialogResponse:
+    return DialogResponse(
+        audio_data=bytes(1234),
+        segments=voice_segments,
+    )
+
+
+@pytest.fixture
+def dialog_script_complete_script(sample_script_file: Path) -> DialogScript:
+    return DialogScript(sample_script_file)
+
+
+@pytest.fixture
+def dialog_script_no_country_code(
+    sample_script_file_no_country_code: Path,
+) -> DialogScript:
+    return DialogScript(sample_script_file_no_country_code)
+
+
+@pytest.fixture
+def dialog_script_no_first_speaker(
+    sample_script_file_no_first_speaker: Path,
+) -> DialogScript:
+    return DialogScript(sample_script_file_no_first_speaker)
 
 
 @pytest.fixture
