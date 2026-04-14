@@ -1,8 +1,11 @@
 from pathlib import Path
 from typing import NamedTuple
 
+from jsonschema import validate
+
 from dialog_script import DialogScript
 from elevenlabs_client import DialogResponse
+from json_schema import OUTPUT
 
 
 class LineTiming(NamedTuple):
@@ -58,6 +61,9 @@ class OutputWriter:
             ],
         }
         return script
+
+    def _validate_output_script(self, output_script: dict[str, object]) -> None:
+        validate(output_script, schema=OUTPUT)
 
     def write_output_script(self) -> None:
         pass
