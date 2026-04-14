@@ -16,6 +16,16 @@ from elevenlabs import (
 
 from dialog_script import DialogScript
 from elevenlabs_client import DialogResponse
+from tests.helpers import (
+    COUNTRY_CODE,
+    LANGUAGE_CODE,
+    SPEAKER_1,
+    SPEAKER_2,
+    TEXT_1,
+    TEXT_2,
+    VOICE_ID_1,
+    VOICE_ID_2,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -30,121 +40,57 @@ def write_dir(tmp_path: Path) -> Path:
 
 
 @pytest.fixture
-def script_language_code() -> str:
-    return "eo"
+def user_voice_1() -> Voice:
+    return Voice(voice_id=VOICE_ID_1)
 
 
 @pytest.fixture
-def script_country_code() -> str:
-    return "AQ"
+def user_voice_2() -> Voice:
+    return Voice(voice_id=VOICE_ID_2)
 
 
 @pytest.fixture
-def script_text_1() -> str:
-    return "Blah blah."
-
-
-@pytest.fixture
-def script_text_2() -> str:
-    return "Blah blah blah."
-
-
-@pytest.fixture
-def script_speaker_1() -> str:
-    return "Gandalf"
-
-
-@pytest.fixture
-def script_speaker_2() -> str:
-    return "Bilbo"
-
-
-@pytest.fixture
-def script_voice_id_1() -> str:
-    return "abc123"
-
-
-@pytest.fixture
-def script_voice_id_2() -> str:
-    return "def456"
-
-
-@pytest.fixture
-def script_voice_id_3() -> str:
-    return "ghi789"
-
-
-@pytest.fixture
-def user_voice_1(script_voice_id_1: str) -> Voice:
-    return Voice(voice_id=script_voice_id_1)
-
-
-@pytest.fixture
-def user_voice_2(script_voice_id_2: str) -> Voice:
-    return Voice(voice_id=script_voice_id_2)
-
-
-@pytest.fixture
-def sample_script(
-    script_language_code: str,
-    script_country_code: str,
-    script_text_1: str,
-    script_text_2: str,
-    script_speaker_1: str,
-    script_speaker_2: str,
-    script_voice_id_1: str,
-    script_voice_id_2: str,
-) -> dict[str, object]:
+def sample_script() -> dict[str, object]:
     """
     A minimal dialog for testing.
     """
     return {
         "locale": {
-            "languageCode": script_language_code,
-            "countryCode": script_country_code,
+            "languageCode": LANGUAGE_CODE,
+            "countryCode": COUNTRY_CODE,
         },
         "lines": [
             {
-                "text": script_text_1,
-                "speaker": script_speaker_1,
-                "voiceId": script_voice_id_1,
+                "text": TEXT_1,
+                "speaker": SPEAKER_1,
+                "voiceId": VOICE_ID_1,
             },
             {
-                "text": script_text_2,
-                "speaker": script_speaker_2,
-                "voiceId": script_voice_id_2,
+                "text": TEXT_2,
+                "speaker": SPEAKER_2,
+                "voiceId": VOICE_ID_2,
             },
         ],
     }
 
 
 @pytest.fixture
-def sample_script_file(
-    tmp_path,
-    script_language_code: str,
-    script_country_code: str,
-    script_text_1: str,
-    script_text_2: str,
-    script_speaker_1: str,
-    script_speaker_2: str,
-    script_voice_id_1: str,
-    script_voice_id_2: str,
-) -> Path:
+def sample_script_file(tmp_path) -> Path:
     script = {
         "locale": {
-            "languageCode": script_language_code,
-            "countryCode": script_country_code,
+            "languageCode": LANGUAGE_CODE,
+            "countryCode": COUNTRY_CODE,
         },
         "lines": [
             {
-                "text": script_text_1,
-                "speaker": script_speaker_1,
-                "voiceId": script_voice_id_1,
+                "text": TEXT_1,
+                "speaker": SPEAKER_1,
+                "voiceId": VOICE_ID_1,
             },
             {
-                "text": script_text_2,
-                "speaker": script_speaker_2,
-                "voiceId": script_voice_id_2,
+                "text": TEXT_2,
+                "speaker": SPEAKER_2,
+                "voiceId": VOICE_ID_2,
             },
         ],
     }
@@ -154,30 +100,21 @@ def sample_script_file(
 
 
 @pytest.fixture
-def sample_script_file_no_country_code(
-    tmp_path,
-    script_language_code: str,
-    script_text_1: str,
-    script_text_2: str,
-    script_speaker_1: str,
-    script_speaker_2: str,
-    script_voice_id_1: str,
-    script_voice_id_2: str,
-) -> Path:
+def sample_script_file_no_country_code(tmp_path) -> Path:
     script = {
         "locale": {
-            "languageCode": script_language_code,
+            "languageCode": LANGUAGE_CODE,
         },
         "lines": [
             {
-                "text": script_text_1,
-                "speaker": script_speaker_1,
-                "voiceId": script_voice_id_1,
+                "text": TEXT_1,
+                "speaker": SPEAKER_1,
+                "voiceId": VOICE_ID_1,
             },
             {
-                "text": script_text_2,
-                "speaker": script_speaker_2,
-                "voiceId": script_voice_id_2,
+                "text": TEXT_2,
+                "speaker": SPEAKER_2,
+                "voiceId": VOICE_ID_2,
             },
         ],
     }
@@ -187,30 +124,21 @@ def sample_script_file_no_country_code(
 
 
 @pytest.fixture
-def sample_script_file_no_first_speaker(
-    tmp_path,
-    script_language_code: str,
-    script_country_code: str,
-    script_text_1: str,
-    script_text_2: str,
-    script_speaker_2: str,
-    script_voice_id_1: str,
-    script_voice_id_2: str,
-) -> Path:
+def sample_script_file_no_first_speaker(tmp_path) -> Path:
     script = {
         "locale": {
-            "languageCode": script_language_code,
-            "countryCode": script_country_code,
+            "languageCode": LANGUAGE_CODE,
+            "countryCode": COUNTRY_CODE,
         },
         "lines": [
             {
-                "text": script_text_1,
-                "voiceId": script_voice_id_1,
+                "text": TEXT_1,
+                "voiceId": VOICE_ID_1,
             },
             {
-                "text": script_text_2,
-                "speaker": script_speaker_2,
-                "voiceId": script_voice_id_2,
+                "text": TEXT_2,
+                "speaker": SPEAKER_2,
+                "voiceId": VOICE_ID_2,
             },
         ],
     }
@@ -220,29 +148,21 @@ def sample_script_file_no_first_speaker(
 
 
 @pytest.fixture
-def sample_script_schema_violation(
-    tmp_path,
-    script_text_1: str,
-    script_text_2: str,
-    script_speaker_1: str,
-    script_speaker_2: str,
-    script_voice_id_1: str,
-    script_voice_id_2: str,
-) -> Path:
+def sample_script_schema_violation(tmp_path) -> Path:
     """
     The required key "locale" is missing, but it's otherwise valid JSON.
     """
     script = {
         "lines": [
             {
-                "text": script_text_1,
-                "speaker": script_speaker_1,
-                "voiceId": script_voice_id_1,
+                "text": TEXT_1,
+                "speaker": SPEAKER_1,
+                "voiceId": VOICE_ID_1,
             },
             {
-                "text": script_text_2,
-                "speaker": script_speaker_2,
-                "voiceId": script_voice_id_2,
+                "text": TEXT_2,
+                "speaker": SPEAKER_2,
+                "voiceId": VOICE_ID_2,
             },
         ],
     }
@@ -271,19 +191,14 @@ def sample_script_file_invalid_json(tmp_path) -> Path:
 
 
 @pytest.fixture
-def dialog_input_list(
-    script_text_1: str,
-    script_text_2: str,
-    script_voice_id_1: str,
-    script_voice_id_2: str,
-) -> list[DialogueInput]:
+def dialog_input_list() -> list[DialogueInput]:
     """
     A list of DialogueInput instances that should correspond to
     `sample_script_file`.
     """
     return [
-        DialogueInput(text=script_text_1, voice_id=script_voice_id_1),
-        DialogueInput(text=script_text_2, voice_id=script_voice_id_2),
+        DialogueInput(text=TEXT_1, voice_id=VOICE_ID_1),
+        DialogueInput(text=TEXT_2, voice_id=VOICE_ID_2),
     ]
 
 
@@ -298,16 +213,13 @@ def invalid_base64_audio_string() -> str:
 
 
 @pytest.fixture
-def voice_segments(
-    script_voice_id_1: str,
-    script_voice_id_2: str,
-) -> list[VoiceSegment]:
+def voice_segments() -> list[VoiceSegment]:
     """
     A mock list of voice segments to mimic a successful response.
     """
     return [
         VoiceSegment(
-            voice_id=script_voice_id_1,
+            voice_id=VOICE_ID_1,
             start_time_seconds=0.0,
             end_time_seconds=1.0,
             character_start_index=0,
@@ -315,7 +227,7 @@ def voice_segments(
             dialogue_input_index=0,
         ),
         VoiceSegment(
-            voice_id=script_voice_id_2,
+            voice_id=VOICE_ID_2,
             start_time_seconds=1.0,
             end_time_seconds=2.0,
             character_start_index=0,

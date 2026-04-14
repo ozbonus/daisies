@@ -6,6 +6,7 @@ from pytest import FixtureRequest
 from dialog_script import DialogScript
 from elevenlabs_client import DialogResponse
 from output_writer import LineTiming, OutputWriter
+from tests.helpers import LANGUAGE_CODE, make_output_script
 
 
 def test_line_timing() -> None:
@@ -55,9 +56,7 @@ def test_build_script(
     input_script: DialogScript = request.getfixturevalue(script_fixture)
     segments = dialog_response.segments
     writer = OutputWriter(
-        write_dir=write_dir,
-        input_script=input_script,
-        response=dialog_response
+        write_dir=write_dir, input_script=input_script, response=dialog_response
     )
     output_script = writer._build_output_script()
     assert output_script["locale"]["languageCode"] == input_script.language_code
@@ -67,3 +66,23 @@ def test_build_script(
         assert line["endTime"] == int(segments[index].end_time_seconds * 1000)
         assert line.get("speaker") == input_script.lines[index].speaker
         assert line["text"] == input_script.lines[index].text
+
+
+class TestOutputScriptValidation:
+    @pytest.fixture(autouse=True)
+    def setup(
+        self,
+        write_dir: Path,
+        dialog_script_complete_script: DialogScript,
+        dialog_response: DialogResponse,
+    ) -> None:
+        self.writer = OutputWriter(
+            write_dir=write_dir,
+            input_script=dialog_script_complete_script,
+            response=dialog_response,
+        )
+
+    def test_full_script(self) -> None:
+        script = make_output_script()
+        self.writer._validate_output_script(script)
+        assert script["locale"]["languageCode"] == LANGUAGE_CODE

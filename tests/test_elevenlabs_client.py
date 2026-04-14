@@ -5,6 +5,7 @@ from elevenlabs import DialogueInput, VoiceSegment
 from elevenlabs.types import ModelSettingsResponseModel
 from elevenlabs_client import DialogResponse, ElevenLabsClient
 
+from tests.helpers import VOICE_ID_1, VOICE_ID_2, VOICE_ID_3
 from errors import AudioDecodeError, ElevenLabsClientError, VoiceNotAvailableError
 
 
@@ -49,11 +50,7 @@ class TestElevenLabsClientGetDialogSuccess:
         """Verify that the audio data is the correct type."""
         assert isinstance(self.result.audio_data, bytes)
 
-    def test_segments_structure(
-        self,
-        script_voice_id_1: str,
-        script_voice_id_2: str,
-    ):
+    def test_segments_structure(self):
         """Verify the structure and contents of the audio segments."""
         segments = self.result.segments
 
@@ -63,10 +60,10 @@ class TestElevenLabsClientGetDialogSuccess:
         assert all(isinstance(i, VoiceSegment) for i in segments)
 
         # Test the contents of each segment.
-        assert self.result.segments[0].voice_id == script_voice_id_1
+        assert self.result.segments[0].voice_id == VOICE_ID_1
         assert self.result.segments[0].start_time_seconds == 0.0
         assert self.result.segments[0].end_time_seconds == 1.0
-        assert self.result.segments[1].voice_id == script_voice_id_2
+        assert self.result.segments[1].voice_id == VOICE_ID_2
         assert self.result.segments[1].start_time_seconds == 1.0
         assert self.result.segments[1].end_time_seconds == 2.0
 
@@ -114,21 +111,18 @@ class TestElevenLabsClientVerifyVoices:
     def test_voices_available(
         self,
         mock_elevenlabs_api: MagicMock,
-        script_voice_id_1: str,
-        script_voice_id_2: str,
     ):
         """
         All voices in the script are available to the user's API key. The method
         should not raise and error.
         """
         client = ElevenLabsClient(mock_elevenlabs_api)
-        client.verify_voices([script_voice_id_1, script_voice_id_2])
+        client.verify_voices([VOICE_ID_1, VOICE_ID_2])
         mock_elevenlabs_api.voices.get_all.assert_called_once()
 
     def test_voice_not_available(
         self,
         mock_elevenlabs_api: MagicMock,
-        script_voice_id_3: str,
     ):
         """
         The script contains one voice that is not available to the user's API.
@@ -137,6 +131,6 @@ class TestElevenLabsClientVerifyVoices:
         """
         client = ElevenLabsClient(mock_elevenlabs_api)
         with pytest.raises(VoiceNotAvailableError) as exception_info:
-            client.verify_voices([script_voice_id_3])
+            client.verify_voices([VOICE_ID_3])
         mock_elevenlabs_api.voices.get_all.assert_called_once()
-        assert script_voice_id_3 in exception_info.value.msg
+        assert VOICE_ID_3 in exception_info.value.msg

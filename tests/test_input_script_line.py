@@ -1,31 +1,25 @@
+from tests.helpers import SPEAKER_1, TEXT_1, VOICE_ID_1
 from input_script_line import InputScriptLine
 
 
-def test_all_properties(
-    script_speaker_1: str,
-    script_voice_id_1: str,
-    script_text_1: str,
-):
+def test_all_properties():
     line = InputScriptLine(
-        speaker=script_speaker_1,
-        voice_id=script_voice_id_1,
-        text=script_text_1,
+        speaker=SPEAKER_1,
+        voice_id=VOICE_ID_1,
+        text=TEXT_1,
     )
-    assert line.speaker == script_speaker_1
-    assert line.voice_id == script_voice_id_1
-    assert line.text == script_text_1
+    assert line.speaker == SPEAKER_1
+    assert line.voice_id == VOICE_ID_1
+    assert line.text == TEXT_1
 
 
-def test_null_speaker(
-    script_voice_id_1: str,
-    script_text_1: str,
-):
+def test_null_speaker():
     line = InputScriptLine(
         # Mimic an expression used by the DialogScript.lines property.
         speaker={}.get("speaker"),
-        voice_id=script_voice_id_1,
-        text=script_text_1,
+        voice_id=VOICE_ID_1,
+        text=TEXT_1,
     )
     assert line.speaker is None
-    assert line.voice_id == script_voice_id_1
-    assert line.text == script_text_1
+    assert line.voice_id == VOICE_ID_1
+    assert line.text == TEXT_1
