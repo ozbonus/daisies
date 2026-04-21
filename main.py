@@ -7,6 +7,7 @@ from elevenlabs import ElevenLabs
 from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
 from errors import VoiceNotAvailableError
+from output_writer import OutputWriter
 
 
 def parse_args() -> tuple[list[Path], bool, Path]:
@@ -109,10 +110,14 @@ def main():
     write_dir.mkdir(exist_ok=True)
 
     for script in dialog_scripts:
-        output = client.get_dialog(inputs=script.dialog_inputs)
-        audio_path = write_dir / f"{script.stem}.mp3"
-        audio_path.write_bytes(output.audio_data)
-        print(output.segments)
+        response = client.get_dialog(inputs=script.dialog_inputs)
+        writer = OutputWriter(
+            write_dir=write_dir,
+            input_script=script,
+            response=response,
+        )
+        writer.write_audio()
+        writer.write_output_script()
 
 
 if __name__ == "__main__":

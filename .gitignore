@@ -1,3 +1,11 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -206,3 +214,4 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 output.mp3
+tests/scripts/output/
