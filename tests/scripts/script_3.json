@@ -1,0 +1,38 @@
+{
+  "locale": {
+    "languageCode": "en",
+    "countryCode": "US"
+  },
+  "lines": [
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "Have you seen my keys? I've checked every pocket."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[amused] Did you check the freezer?"
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "[confused] Why would they be in the freezer?"
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "Last Tuesday. You put them down when you grabbed ice cream."
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "[gasps] They're in there. [embarrassed] Don't tell anyone."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[laughing] Too late, I already texted your mum."
+    }
+  ]
+}

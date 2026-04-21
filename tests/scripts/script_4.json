@@ -1,0 +1,38 @@
+{
+  "locale": {
+    "languageCode": "en",
+    "countryCode": "US"
+  },
+  "lines": [
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "The forecast says rain all weekend."
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "[disappointed] Of course it does. I finally booked that picnic spot."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "We could do it indoors. Blanket on the floor, the whole thing."
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "[skeptical] An indoor picnic."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[excited] Yes! No insects, no wind, unlimited snacks."
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "[warming up] Okay… I'm actually starting to prefer this plan."
+    }
+  ]
+}

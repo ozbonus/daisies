@@ -1,0 +1,38 @@
+{
+  "locale": {
+    "languageCode": "en",
+    "countryCode": "US"
+  },
+  "lines": [
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "[surprised] Wait, did you hear that? I think the cat knocked something over again."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[sighs] Which shelf was it this time?"
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "The one with the plants. [worried] The big ceramic pot is on the floor."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[gasps] Not the fiddle-leaf fig!"
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "Afraid so. Soil everywhere."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[angry] That cat is on thin ice."
+    }
+  ]
+}

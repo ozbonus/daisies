@@ -1,0 +1,38 @@
+{
+  "locale": {
+    "languageCode": "en",
+    "countryCode": "US"
+  },
+  "lines": [
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "Do you want coffee? I'm making a pot."
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "[enthusiastic] Yes please, I've been up since five."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[whispering] Five? Why?"
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "The neighbours were having some kind of argument. [tired] Through the wall."
+    },
+    {
+      "speaker": "Ellen",
+      "voiceId": "BIvP0GN1cAtSRTxNHnWS",
+      "text": "[sympathetic] That's rough. Black or milk?"
+    },
+    {
+      "speaker": "Mark",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "text": "Black. [grateful] Thanks, Ellen."
+    }
+  ]
+}
