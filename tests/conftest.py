@@ -25,6 +25,7 @@ from tests.helpers import (
     TEXT_2,
     VOICE_ID_1,
     VOICE_ID_2,
+    mp3_bytes,
 )
 
 
@@ -240,7 +241,7 @@ def voice_segments() -> list[VoiceSegment]:
 @pytest.fixture
 def dialog_response(voice_segments: list[VoiceSegment]) -> DialogResponse:
     return DialogResponse(
-        audio_data=bytes(1234),
+        audio_data=bytes(mp3_bytes),
         segments=voice_segments,
     )
 
@@ -279,7 +280,7 @@ def mock_elevenlabs_api(
     mock_get_dialogue_result = MagicMock(
         spec=AudioWithTimestampsAndVoiceSegmentsResponseModel
     )
-    mock_get_dialogue_result.audio_base_64 = "aGVsbG8egd29ybGQ"
+    mock_get_dialogue_result.audio_base_64 = mp3_bytes
     mock_get_dialogue_result.voice_segments = voice_segments
     mock.text_to_dialogue.convert_with_timestamps.return_value = (
         mock_get_dialogue_result

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import NamedTuple
 
@@ -30,6 +31,9 @@ class OutputWriter:
         self.response = response
         self.audio_write_path = write_dir / f"{input_script.stem}.mp3"
         self.script_write_path = write_dir / f"{input_script.stem}.json"
+        output_script = self._build_output_script()
+        self._validate_output_script(output_script)
+        self.output_script = output_script
 
     def _build_output_script(self) -> dict:
         language_code = self.input_script.language_code
@@ -66,7 +70,16 @@ class OutputWriter:
         validate(output_script, schema=OUTPUT)
 
     def write_output_script(self) -> None:
-        pass
+        self.script_write_path.write_text(
+            json.dumps(
+                self.output_script,
+                indent=2,
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
 
     def write_audio(self) -> None:
-        pass
+        self.audio_write_path.write_bytes(
+            self.response.audio_data,
+        )

@@ -1,4 +1,7 @@
 # Sentinel used to omit a key-value pair from a dict during unit tests.
+import base64
+
+
 OMIT = object()
 
 LANGUAGE_CODE = "eo"
@@ -14,6 +17,10 @@ SPEAKER_2 = "Bilbo"
 VOICE_ID_1 = "abc123"
 VOICE_ID_2 = "def456"
 VOICE_ID_3 = "ghi789"
+
+mp3_bytes = base64.b64decode(
+    "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU2LjM2LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU2LjQxAAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV"
+)
 
 
 def make_output_script(
@@ -33,22 +40,28 @@ def make_output_script(
         return {k: v for k, v in d.items() if v is not OMIT}
 
     return {
-        "locale": _strip({
-            "languageCode": language_code,
-            "countryCode": country_code,
-        }),
+        "locale": _strip(
+            {
+                "languageCode": language_code,
+                "countryCode": country_code,
+            }
+        ),
         "lines": [
-            _strip({
-                "startTime": start_time_1,
-                "endTime": end_time_1,
-                "speaker": speaker_1,
-                "text": text_1,
-            }),
-            _strip({
-                "startTime": start_time_2,
-                "endTime": end_time_2,
-                "speaker": speaker_2,
-                "text": text_2,
-            }),
+            _strip(
+                {
+                    "startTime": start_time_1,
+                    "endTime": end_time_1,
+                    "speaker": speaker_1,
+                    "text": text_1,
+                }
+            ),
+            _strip(
+                {
+                    "startTime": start_time_2,
+                    "endTime": end_time_2,
+                    "speaker": speaker_2,
+                    "text": text_2,
+                }
+            ),
         ],
     }

@@ -1,11 +1,16 @@
+import json
 from pathlib import Path
 
 from jsonschema import ValidationError
+import mutagen
+from mutagen.mp3 import MP3
 import pytest
 from pytest import FixtureRequest
+from mutagen._file import File
 
 from dialog_script import DialogScript
 from elevenlabs_client import DialogResponse
+from json_schema import OUTPUT
 from output_writer import LineTiming, OutputWriter
 from tests.helpers import (
     COUNTRY_CODE,
@@ -169,3 +174,52 @@ class TestOutputScriptValidation:
                     text_2=OMIT,
                 ),
             )
+
+
+class TestWriteOutputScript:
+    @pytest.fixture(autouse=True)
+    def setup(
+        self,
+        write_dir: Path,
+        dialog_script_complete_script: DialogScript,
+        dialog_response: DialogResponse,
+    ) -> None:
+        self.writer = OutputWriter(
+            write_dir=write_dir,
+            input_script=dialog_script_complete_script,
+            response=dialog_response,
+        )
+        self.writer.write_output_script()
+        self.script_path = self.writer.script_write_path
+
+    def test_write_file_to_path(self) -> None:
+        assert self.script_path.exists()
+
+    def test_file_contents(self) -> None:
+        with open(self.script_path, encoding="utf-8") as file:
+            data = json.load(file)
+        assert data == self.writer.output_script
+
+
+class TestWriteAudio:
+    @pytest.fixture(autouse=True)
+    def setup(
+        self,
+        write_dir: Path,
+        dialog_script_complete_script: DialogScript,
+        dialog_response: DialogResponse,
+    ) -> None:
+        self.writer = OutputWriter(
+            write_dir=write_dir,
+            input_script=dialog_script_complete_script,
+            response=dialog_response,
+        )
+        self.writer.write_audio()
+        self.audio_path = self.writer.audio_write_path
+
+    def test_write_file_to_path(self) -> None:
+        assert self.audio_path.exists()
+    
+    def test_file_validity(self) -> None:
+        file = File(self.audio_path)
+        assert isinstance(file, MP3)
