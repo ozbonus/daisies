@@ -7,32 +7,32 @@
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[whispering] The meeting starts in two minutes and I forgot to prep the slides."
+      "text": "[long pause] [whispering] The meeting starts in two minutes and I forgot to prep the slides."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[alarmed] Which slides? The quarterly ones?"
+      "text": "[long pause] [alarmed] Which slides? The quarterly ones?"
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "Yes. [panicking] There are twelve charts and I've done zero of them."
+      "text": "[long pause] Yes. [panicking] There are twelve charts and I've done zero of them."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "Send them your last deck. Same charts, just change the date."
+      "text": "[long pause] Send them your last deck. Same charts, just change the date."
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[surprised] That's… actually brilliant."
+      "text": "[long pause] [surprised] That's… actually brilliant."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[dryly] I know. You owe me lunch."
+      "text": "[long pause] [dryly] I know. You owe me lunch. [long pause]"
     }
   ]
 }
