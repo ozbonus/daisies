@@ -17,6 +17,7 @@ INPUT = {
                 "type": "object",
                 "properties": {
                     "text": {"type": "string"},
+                    "taggedText": {"type": "string"},
                     "speaker": {"type": ["string", "null"]},
                     "voiceId": {"type": "string"},
                 },
