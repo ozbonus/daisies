@@ -21,6 +21,8 @@ from tests.helpers import (
     LANGUAGE_CODE,
     SPEAKER_1,
     SPEAKER_2,
+    TAGGED_TEXT_1,
+    TAGGED_TEXT_2,
     TEXT_1,
     TEXT_2,
     VOICE_ID_1,
@@ -85,11 +87,13 @@ def sample_script_file(tmp_path) -> Path:
         "lines": [
             {
                 "text": TEXT_1,
+                "taggedText": TAGGED_TEXT_1,
                 "speaker": SPEAKER_1,
                 "voiceId": VOICE_ID_1,
             },
             {
                 "text": TEXT_2,
+                "taggedText": TAGGED_TEXT_2,
                 "speaker": SPEAKER_2,
                 "voiceId": VOICE_ID_2,
             },
@@ -109,11 +113,13 @@ def sample_script_file_no_country_code(tmp_path) -> Path:
         "lines": [
             {
                 "text": TEXT_1,
+                "taggedText": TAGGED_TEXT_1,
                 "speaker": SPEAKER_1,
                 "voiceId": VOICE_ID_1,
             },
             {
                 "text": TEXT_2,
+                "taggedText": TAGGED_TEXT_2,
                 "speaker": SPEAKER_2,
                 "voiceId": VOICE_ID_2,
             },
@@ -134,10 +140,12 @@ def sample_script_file_no_first_speaker(tmp_path) -> Path:
         "lines": [
             {
                 "text": TEXT_1,
+                "taggedText": TAGGED_TEXT_1,
                 "voiceId": VOICE_ID_1,
             },
             {
                 "text": TEXT_2,
+                "taggedText": TAGGED_TEXT_2,
                 "speaker": SPEAKER_2,
                 "voiceId": VOICE_ID_2,
             },
