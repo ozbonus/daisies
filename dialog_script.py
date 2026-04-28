@@ -41,8 +41,7 @@ class DialogScript:
     @property
     def dialog_inputs(self) -> list[DialogueInput]:
         return [
-            DialogueInput(text=line["text"], voice_id=line["voiceId"])
-            for line in self.data["lines"]
+            DialogueInput(text=line["text"], voice_id=line["voiceId"]) for line in self.data["lines"]
         ]
 
     @property
