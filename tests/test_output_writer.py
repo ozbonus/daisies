@@ -219,7 +219,7 @@ class TestWriteAudio:
 
     def test_write_file_to_path(self) -> None:
         assert self.audio_path.exists()
-    
+
     def test_file_validity(self) -> None:
         file = File(self.audio_path)
         assert isinstance(file, MP3)

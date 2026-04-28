@@ -8,6 +8,7 @@ from tests.helpers import (
     LANGUAGE_CODE,
     SPEAKER_1,
     SPEAKER_2,
+    TAGGED_TEXT_1,
     TEXT_1,
     TEXT_2,
     VOICE_ID_1,
@@ -32,6 +33,10 @@ class TestDialogScriptLoadScript:
         script = DialogScript(sample_script_file_no_country_code)
         assert script is not None
         assert script.country_code is None
+
+    def test_no_tagged_text(self, sample_script_file_no_tagged_text):
+        script = DialogScript(sample_script_file_no_tagged_text)
+        assert script is not None
 
     def test_invalid_json(self, sample_script_file_invalid_json):
         with pytest.raises(JSONDecodeError):
@@ -63,6 +68,15 @@ class TestDialogScriptDialogInputsMethod:
         inputs = script.dialog_inputs
         assert inputs == dialog_input_list
 
+    def test_dialog_inputs_no_tagged_text(
+        self,
+        sample_script_file_no_tagged_text,
+        dialog_input_list_no_tagged_text,
+    ):
+        script = DialogScript(sample_script_file_no_tagged_text)
+        inputs = script.dialog_inputs
+        assert inputs == dialog_input_list_no_tagged_text
+
 
 class TestDialogScriptLinesProperty:
     def test_lines(
@@ -70,6 +84,20 @@ class TestDialogScriptLinesProperty:
         sample_script_file,
     ):
         script = DialogScript(sample_script_file)
+        lines = script.lines
+        assert len(lines) == 2
+        assert lines[0].speaker == SPEAKER_1
+        assert lines[0].voice_id == VOICE_ID_1
+        assert lines[0].text == TEXT_1
+        assert lines[1].speaker == SPEAKER_2
+        assert lines[1].voice_id == VOICE_ID_2
+        assert lines[1].text == TEXT_2
+
+    def test_lines_no_tagged_text(
+        self,
+        sample_script_file_no_tagged_text,
+    ):
+        script = DialogScript(sample_script_file_no_tagged_text)
         lines = script.lines
         assert len(lines) == 2
         assert lines[0].speaker == SPEAKER_1

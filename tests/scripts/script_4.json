@@ -7,32 +7,38 @@
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] The forecast says rain all weekend."
+      "text": "The forecast says rain all weekend.",
+      "taggedText": "[long pause] The forecast says rain all weekend."
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] [disappointed] Of course it does. I finally booked that picnic spot."
+      "text": "Of course it does. I finally booked that picnic spot.",
+      "taggedText": "[long pause] [disappointed] Of course it does. I finally booked that picnic spot."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] We could do it indoors. Blanket on the floor, the whole thing."
+      "text": "We could do it indoors. Blanket on the floor, the whole thing.",
+      "taggedText": "[long pause] We could do it indoors. Blanket on the floor, the whole thing."
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] [skeptical] An indoor picnic."
+      "text": "An indoor picnic.",
+      "taggedText": "[long pause] [skeptical] An indoor picnic."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [excited] Yes! No insects, no wind, unlimited snacks."
+      "text": "Yes! No insects, no wind, unlimited snacks.",
+      "taggedText": "[long pause] [excited] Yes! No insects, no wind, unlimited snacks."
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] [warming up] Okay… I'm actually starting to prefer this plan. [long pause]"
+      "text": "Okay... I'm actually starting to prefer this plan.",
+      "taggedText": "[long pause] [warming up] Okay... I'm actually starting to prefer this plan. [long pause]"
     }
   ]
 }

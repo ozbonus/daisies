@@ -40,8 +40,17 @@ class DialogScript:
 
     @property
     def dialog_inputs(self) -> list[DialogueInput]:
+        """
+        Build an return a list of `DialogInput` to be fed into the ElevenLabs API.
+        If a line tagged text, e.g. "[surprised] Wow!", then that will be used
+        for the `text` field. Otherwise, the obligatory untagged text will be
+        used.
+        """
         return [
-            DialogueInput(text=line["text"], voice_id=line["voiceId"])
+            DialogueInput(
+                text=line.get("taggedText") or line["text"],
+                voice_id=line["voiceId"],
+            )
             for line in self.data["lines"]
         ]
 

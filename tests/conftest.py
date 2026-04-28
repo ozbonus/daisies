@@ -21,10 +21,13 @@ from tests.helpers import (
     LANGUAGE_CODE,
     SPEAKER_1,
     SPEAKER_2,
+    TAGGED_TEXT_1,
+    TAGGED_TEXT_2,
     TEXT_1,
     TEXT_2,
     VOICE_ID_1,
     VOICE_ID_2,
+    MP3_BASE64,
     mp3_bytes,
 )
 
@@ -85,11 +88,13 @@ def sample_script_file(tmp_path) -> Path:
         "lines": [
             {
                 "text": TEXT_1,
+                "taggedText": TAGGED_TEXT_1,
                 "speaker": SPEAKER_1,
                 "voiceId": VOICE_ID_1,
             },
             {
                 "text": TEXT_2,
+                "taggedText": TAGGED_TEXT_2,
                 "speaker": SPEAKER_2,
                 "voiceId": VOICE_ID_2,
             },
@@ -109,11 +114,13 @@ def sample_script_file_no_country_code(tmp_path) -> Path:
         "lines": [
             {
                 "text": TEXT_1,
+                "taggedText": TAGGED_TEXT_1,
                 "speaker": SPEAKER_1,
                 "voiceId": VOICE_ID_1,
             },
             {
                 "text": TEXT_2,
+                "taggedText": TAGGED_TEXT_2,
                 "speaker": SPEAKER_2,
                 "voiceId": VOICE_ID_2,
             },
@@ -134,6 +141,33 @@ def sample_script_file_no_first_speaker(tmp_path) -> Path:
         "lines": [
             {
                 "text": TEXT_1,
+                "taggedText": TAGGED_TEXT_1,
+                "voiceId": VOICE_ID_1,
+            },
+            {
+                "text": TEXT_2,
+                "taggedText": TAGGED_TEXT_2,
+                "speaker": SPEAKER_2,
+                "voiceId": VOICE_ID_2,
+            },
+        ],
+    }
+    script_file = tmp_path / "script.json"
+    script_file.write_text(json.dumps(script))
+    return script_file
+
+
+@pytest.fixture
+def sample_script_file_no_tagged_text(tmp_path) -> Path:
+    script = {
+        "locale": {
+            "languageCode": LANGUAGE_CODE,
+            "countryCode": COUNTRY_CODE,
+        },
+        "lines": [
+            {
+                "text": TEXT_1,
+                "speaker": SPEAKER_1,
                 "voiceId": VOICE_ID_1,
             },
             {
@@ -198,6 +232,18 @@ def dialog_input_list() -> list[DialogueInput]:
     `sample_script_file`.
     """
     return [
+        DialogueInput(text=TAGGED_TEXT_1, voice_id=VOICE_ID_1),
+        DialogueInput(text=TAGGED_TEXT_2, voice_id=VOICE_ID_2),
+    ]
+
+
+@pytest.fixture
+def dialog_input_list_no_tagged_text() -> list[DialogueInput]:
+    """
+    A list of DialogueInput instances that should correspond to
+    `sample_script_file`.
+    """
+    return [
         DialogueInput(text=TEXT_1, voice_id=VOICE_ID_1),
         DialogueInput(text=TEXT_2, voice_id=VOICE_ID_2),
     ]
@@ -241,7 +287,7 @@ def voice_segments() -> list[VoiceSegment]:
 @pytest.fixture
 def dialog_response(voice_segments: list[VoiceSegment]) -> DialogResponse:
     return DialogResponse(
-        audio_data=bytes(mp3_bytes),
+        audio_data=mp3_bytes,
         segments=voice_segments,
     )
 
@@ -280,7 +326,7 @@ def mock_elevenlabs_api(
     mock_get_dialogue_result = MagicMock(
         spec=AudioWithTimestampsAndVoiceSegmentsResponseModel
     )
-    mock_get_dialogue_result.audio_base_64 = mp3_bytes
+    mock_get_dialogue_result.audio_base_64 = MP3_BASE64
     mock_get_dialogue_result.voice_segments = voice_segments
     mock.text_to_dialogue.convert_with_timestamps.return_value = (
         mock_get_dialogue_result
