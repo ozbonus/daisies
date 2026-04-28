@@ -231,6 +231,18 @@ def dialog_input_list() -> list[DialogueInput]:
     `sample_script_file`.
     """
     return [
+        DialogueInput(text=TAGGED_TEXT_1, voice_id=VOICE_ID_1),
+        DialogueInput(text=TAGGED_TEXT_2, voice_id=VOICE_ID_2),
+    ]
+
+
+@pytest.fixture
+def dialog_input_list_no_tagged_text() -> list[DialogueInput]:
+    """
+    A list of DialogueInput instances that should correspond to
+    `sample_script_file`.
+    """
+    return [
         DialogueInput(text=TEXT_1, voice_id=VOICE_ID_1),
         DialogueInput(text=TEXT_2, voice_id=VOICE_ID_2),
     ]
