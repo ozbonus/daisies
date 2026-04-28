@@ -7,32 +7,38 @@
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] Do you want coffee? I'm making a pot."
+      "text": "Do you want coffee? I'm making a pot.",
+      "taggedText": "[long pause] Do you want coffee? I'm making a pot."
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] [enthusiastic] Yes please, I've been up since five."
+      "text": "Yes please, I've been up since five.",
+      "taggedText": "[long pause] [enthusiastic] Yes please, I've been up since five."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [whispering] Five? Why?"
+      "text": "Five? Why?",
+      "taggedText": "[long pause] [whispering] Five? Why?"
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] The neighbours were having some kind of argument. [tired] Through the wall."
+      "text": "The neighbors were having some kind of argument. Through the wall.",
+      "taggedText": "[long pause] The neighbors were having some kind of argument. [tired] Through the wall."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [sympathetic] That's rough. Black or milk?"
+      "text": "That's rough. Black or milk?",
+      "taggedText": "[long pause] [sympathetic] That's rough. Black or milk?"
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] Black. [grateful] Thanks, Ellen. [long pause]"
+      "text": "Black. Thanks, Ellen.",
+      "taggedText": "[long pause] Black. [grateful] Thanks, Ellen. [long pause]"
     }
   ]
 }

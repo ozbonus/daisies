@@ -7,32 +7,38 @@
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] [whispering] The meeting starts in two minutes and I forgot to prep the slides."
+      "text": "The meeting starts in two minutes and I forgot to prep the slides.",
+      "taggedText": "[long pause] [whispering] The meeting starts in two minutes and I forgot to prep the slides."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [alarmed] Which slides? The quarterly ones?"
+      "text": "Which slides? The quarterly ones?",
+      "taggedText": "[long pause] [alarmed] Which slides? The quarterly ones?"
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] Yes. [panicking] There are twelve charts and I've done zero of them."
+      "text": "Yes. There are twelve charts and I've done zero of them.",
+      "taggedText": "[long pause] Yes. [panicking] There are twelve charts and I've done zero of them."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] Send them your last deck. Same charts, just change the date."
+      "text": "Send them your last deck. Same charts, just change the date.",
+      "taggedText": "[long pause] Send them your last deck. Same charts, just change the date."
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] [surprised] That's… actually brilliant."
+      "text": "That's... actually brilliant.",
+      "taggedText": "[long pause] [surprised] That's... actually brilliant."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [dryly] I know. You owe me lunch. [long pause]"
+      "text": "I know. You owe me lunch.",
+      "taggedText": "[long pause] [dryly] I know. You owe me lunch. [long pause]"
     }
   ]
 }

@@ -7,32 +7,38 @@
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] [surprised] Wait, did you hear that? I think the cat knocked something over again."
+      "text": "Wait, did you hear that? I think the cat knocked something over again.",
+      "taggedText": "[long pause] [surprised] Wait, did you hear that? I think the cat knocked something over again."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [sighs] Which shelf was it this time?"
+      "text": "Which shelf was it this time?",
+      "taggedText": "[long pause] [sighs] Which shelf was it this time?"
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] The one with the plants. [worried] The big ceramic pot is on the floor."
+      "text": "The one with the plants. The big ceramic pot is on the floor.",
+      "taggedText": "[long pause] The one with the plants. [worried] The big ceramic pot is on the floor."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [gasps] Not the fiddle-leaf fig!"
+      "text": "Not the fiddle-leaf fig!",
+      "taggedText": "[long pause] [gasps] Not the fiddle-leaf fig!"
     },
     {
       "speaker": "Mark",
       "voiceId": "UgBBYS2sOqTuMpoF3BR0",
-      "text": "[long pause] Afraid so. Soil everywhere."
+      "text": "Afraid so. Soil everywhere.",
+      "taggedText": "[long pause] Afraid so. Soil everywhere."
     },
     {
       "speaker": "Ellen",
       "voiceId": "BIvP0GN1cAtSRTxNHnWS",
-      "text": "[long pause] [angry] That cat is on thin ice. [long pause]"
+      "text": "That cat is on thin ice.",
+      "taggedText": "[long pause] [angry] That cat is on thin ice. [long pause]"
     }
   ]
 }
