@@ -10,6 +10,7 @@ dependencies = [
     "mutagen>=1.47.0",
     "pytest>=9.0.2",
     "python-dotenv>=1.2.1",
+    "tqdm>=4.67.3",
 ]
 
 [dependency-groups]
