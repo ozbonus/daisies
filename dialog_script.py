@@ -48,7 +48,7 @@ class DialogScript:
         """
         return [
             DialogueInput(
-                text=line["taggedText"] or line["text"],
+                text=line.get("taggedText") or line["text"],
                 voice_id=line["voiceId"],
             )
             for line in self.data["lines"]
