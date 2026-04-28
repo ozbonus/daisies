@@ -157,6 +157,31 @@ def sample_script_file_no_first_speaker(tmp_path) -> Path:
 
 
 @pytest.fixture
+def sample_script_file_no_tagged_text(tmp_path) -> Path:
+    script = {
+        "locale": {
+            "languageCode": LANGUAGE_CODE,
+            "countryCode": COUNTRY_CODE,
+        },
+        "lines": [
+            {
+                "text": TEXT_1,
+                "speaker": SPEAKER_1,
+                "voiceId": VOICE_ID_1,
+            },
+            {
+                "text": TEXT_2,
+                "speaker": SPEAKER_2,
+                "voiceId": VOICE_ID_2,
+            },
+        ],
+    }
+    script_file = tmp_path / "script.json"
+    script_file.write_text(json.dumps(script))
+    return script_file
+
+
+@pytest.fixture
 def sample_script_schema_violation(tmp_path) -> Path:
     """
     The required key "locale" is missing, but it's otherwise valid JSON.
