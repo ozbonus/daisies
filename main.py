@@ -1,9 +1,12 @@
+from functools import partial
 import os
 import argparse
 from pathlib import Path
 
 from dotenv import load_dotenv
 from elevenlabs import ElevenLabs
+from tqdm import tqdm
+from tqdm.contrib.concurrent import thread_map
 from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
 from errors import VoiceNotAvailableError
@@ -74,12 +77,19 @@ def decide_files_to_write(
     return [path for path in inputs if path.stem not in existing_stems]
 
 
-def write_audio():
-    pass
-
-
-def write_segments():
-    pass
+def process_script(
+    script: DialogScript,
+    client: ElevenLabsClient,
+    write_dir: Path,
+) -> None:
+    response = client.get_dialog(inputs=script.dialog_inputs)
+    writer = OutputWriter(
+        write_dir=write_dir,
+        input_script=script,
+        response=response,
+    )
+    writer.write_audio()
+    writer.write_output_script()
 
 
 def main():
@@ -98,7 +108,9 @@ def main():
         write_dir=write_dir,
     )
     if not scripts:
-        raise SystemExit("All input files have corresponding outputs and overwriting was not enabled")
+        raise SystemExit(
+            "All input files have corresponding outputs and overwriting was not enabled"
+        )
     dialog_scripts = [DialogScript(path) for path in scripts]
 
     voices = {voice for script in dialog_scripts for voice in script.voices}
@@ -109,15 +121,13 @@ def main():
 
     write_dir.mkdir(exist_ok=True)
 
-    for script in dialog_scripts:
-        response = client.get_dialog(inputs=script.dialog_inputs)
-        writer = OutputWriter(
-            write_dir=write_dir,
-            input_script=script,
-            response=response,
-        )
-        writer.write_audio()
-        writer.write_output_script()
+    thread_map(
+        partial(process_script, client=client, write_dir=write_dir),
+        dialog_scripts,
+        max_workers=3,
+        desc="Processing",
+        unit="file",
+    )
 
 
 if __name__ == "__main__":
