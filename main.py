@@ -9,7 +9,7 @@ from tqdm import tqdm
 from tqdm.contrib.concurrent import thread_map
 from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
-from errors import VoiceNotAvailableError
+from errors import ElevenLabsClientError, VoiceNotAvailableError
 from output_writer import OutputWriter
 
 
@@ -121,13 +121,17 @@ def main():
 
     write_dir.mkdir(exist_ok=True)
 
-    thread_map(
-        partial(process_script, client=client, write_dir=write_dir),
-        dialog_scripts,
-        max_workers=3,
-        desc="Processing",
-        unit="file",
-    )
+
+    try:
+        thread_map(
+            partial(process_script, client=client, write_dir=write_dir),
+            dialog_scripts,
+            max_workers=5,
+            desc="Processing",
+            unit="file",
+        )
+    except ElevenLabsClientError as error:
+        raise SystemExit(error.msg)
 
 
 if __name__ == "__main__":

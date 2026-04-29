@@ -88,7 +88,10 @@ class ElevenLabsClient:
             else:
                 raise ElevenLabsClientError(msg="Unspecified API client error")
         except ApiError as error:
-            raise ElevenLabsClientError(msg=f"API error {error.status_code}: {error.body}")
+            code = error.status_code
+            detail = (error.body or {}).get("detail") or {}
+            message = detail.get("message") or "Unknown API error"
+            raise ElevenLabsClientError(msg=f"API error {code}: {message}")
         except Exception:
             raise ElevenLabsClientError(msg="Unhandled API client error")
 

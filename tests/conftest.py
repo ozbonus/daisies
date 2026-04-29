@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from elevenlabs.core import ApiError
 import pytest
 from elevenlabs import (
     AudioWithTimestampsAndVoiceSegmentsResponseModel,
@@ -362,6 +363,14 @@ def mock_api_unhandled_error():
     """
     mock = MagicMock(spec=ElevenLabs)
     error = Exception()
+    mock.text_to_dialogue.convert_with_timestamps.side_effect = error
+    return mock
+
+
+@pytest.fixture
+def mock_elevenlabs_api_error():
+    mock = MagicMock(spec=ElevenLabs)
+    error = ApiError()
     mock.text_to_dialogue.convert_with_timestamps.side_effect = error
     return mock
 

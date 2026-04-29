@@ -92,6 +92,15 @@ class TestElevenLabsClientError:
             client.get_dialog(dialog_input_list)
         assert "Unhandled API client error" in exception_info.value.msg
 
+    def test_raise_elevenlabs_client_error_on_api_error(
+        self,
+        dialog_input_list: list[DialogueInput],
+        mock_elevenlabs_api_error: MagicMock,
+    ) -> None:
+        client = ElevenLabsClient(mock_elevenlabs_api_error)
+        with pytest.raises(ElevenLabsClientError) as exception_info:
+            client.get_dialog(dialog_input_list)
+
     def test_raise_audio_decode_error(
         self,
         dialog_input_list: list[DialogueInput],
