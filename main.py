@@ -1,16 +1,19 @@
+from functools import partial
 import os
 import argparse
 from pathlib import Path
 
 from dotenv import load_dotenv
 from elevenlabs import ElevenLabs
+from tqdm import tqdm
+from tqdm.contrib.concurrent import thread_map
 from dialog_script import DialogScript
 from elevenlabs_client import ElevenLabsClient
-from errors import VoiceNotAvailableError
+from errors import ElevenLabsClientError, VoiceNotAvailableError
 from output_writer import OutputWriter
 
 
-def parse_args() -> tuple[list[Path], bool, Path]:
+def parse_args() -> tuple[list[Path], bool, Path, int]:
     parser = argparse.ArgumentParser(
         prog="daisies",
         description="A utility for generating audio and timestamps from text dialog scripts.",
@@ -24,15 +27,24 @@ def parse_args() -> tuple[list[Path], bool, Path]:
     )
 
     parser.add_argument(
+        "-r",
+        "--requests",
+        type=int,
+        default=3,
+        help="number of simultaneous requests, default 3"
+    )
+
+    parser.add_argument(
         "-o",
         "--overwrite",
         action="store_true",
-        help="overwrite existing files",
+        help="allow overwriting of existing files",
     )
 
     args = parser.parse_args()
     path: Path = args.input
     overwrite: bool = args.overwrite
+    requests: int = args.requests
 
     if not path.exists():
         parser.error(f"Not found: {path}")
@@ -53,7 +65,7 @@ def parse_args() -> tuple[list[Path], bool, Path]:
     if not os.access(write_dir.parent, os.W_OK):
         parser.error(f"No write permission in directory: {write_dir.parent}")
 
-    return scripts, overwrite, write_dir
+    return scripts, overwrite, write_dir, requests
 
 
 def get_api_key() -> str:
@@ -74,16 +86,23 @@ def decide_files_to_write(
     return [path for path in inputs if path.stem not in existing_stems]
 
 
-def write_audio():
-    pass
-
-
-def write_segments():
-    pass
+def process_script(
+    script: DialogScript,
+    client: ElevenLabsClient,
+    write_dir: Path,
+) -> None:
+    response = client.get_dialog(inputs=script.dialog_inputs)
+    writer = OutputWriter(
+        write_dir=write_dir,
+        input_script=script,
+        response=response,
+    )
+    writer.write_audio()
+    writer.write_output_script()
 
 
 def main():
-    inputs, overwrite, write_dir = parse_args()
+    inputs, overwrite, write_dir, requests = parse_args()
     load_dotenv()
 
     api = ElevenLabs(
@@ -98,7 +117,9 @@ def main():
         write_dir=write_dir,
     )
     if not scripts:
-        raise SystemExit("All input files have corresponding outputs and overwriting was not enabled")
+        raise SystemExit(
+            "All input files have corresponding outputs and overwriting was not enabled"
+        )
     dialog_scripts = [DialogScript(path) for path in scripts]
 
     voices = {voice for script in dialog_scripts for voice in script.voices}
@@ -109,15 +130,17 @@ def main():
 
     write_dir.mkdir(exist_ok=True)
 
-    for script in dialog_scripts:
-        response = client.get_dialog(inputs=script.dialog_inputs)
-        writer = OutputWriter(
-            write_dir=write_dir,
-            input_script=script,
-            response=response,
+
+    try:
+        thread_map(
+            partial(process_script, client=client, write_dir=write_dir),
+            dialog_scripts,
+            max_workers=requests,
+            desc="Processing",
+            unit="file",
         )
-        writer.write_audio()
-        writer.write_output_script()
+    except ElevenLabsClientError as error:
+        raise SystemExit(error.msg)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ import binascii
 from dataclasses import dataclass
 from elevenlabs import DialogueInput, UnprocessableEntityError
 from elevenlabs.client import ElevenLabs
+from elevenlabs.core import ApiError
 from elevenlabs.types import ModelSettingsResponseModel, VoiceSegment
 
 from errors import AudioDecodeError, ElevenLabsClientError, VoiceNotAvailableError
@@ -86,6 +87,11 @@ class ElevenLabsClient:
                 raise ElevenLabsClientError(msg=msg)
             else:
                 raise ElevenLabsClientError(msg="Unspecified API client error")
+        except ApiError as error:
+            code = error.status_code
+            detail = (error.body or {}).get("detail") or {}
+            message = detail.get("message") or "Unknown API error"
+            raise ElevenLabsClientError(msg=f"API error {code}: {message}")
         except Exception:
             raise ElevenLabsClientError(msg="Unhandled API client error")
 
