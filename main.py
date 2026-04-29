@@ -13,7 +13,7 @@ from errors import ElevenLabsClientError, VoiceNotAvailableError
 from output_writer import OutputWriter
 
 
-def parse_args() -> tuple[list[Path], bool, Path]:
+def parse_args() -> tuple[list[Path], bool, Path, int]:
     parser = argparse.ArgumentParser(
         prog="daisies",
         description="A utility for generating audio and timestamps from text dialog scripts.",
@@ -27,15 +27,24 @@ def parse_args() -> tuple[list[Path], bool, Path]:
     )
 
     parser.add_argument(
+        "-r",
+        "--requests",
+        type=int,
+        default=3,
+        help="number of simultaneous requests, default 3"
+    )
+
+    parser.add_argument(
         "-o",
         "--overwrite",
         action="store_true",
-        help="overwrite existing files",
+        help="allow overwriting of existing files",
     )
 
     args = parser.parse_args()
     path: Path = args.input
     overwrite: bool = args.overwrite
+    requests: int = args.requests
 
     if not path.exists():
         parser.error(f"Not found: {path}")
@@ -56,7 +65,7 @@ def parse_args() -> tuple[list[Path], bool, Path]:
     if not os.access(write_dir.parent, os.W_OK):
         parser.error(f"No write permission in directory: {write_dir.parent}")
 
-    return scripts, overwrite, write_dir
+    return scripts, overwrite, write_dir, requests
 
 
 def get_api_key() -> str:
@@ -93,7 +102,7 @@ def process_script(
 
 
 def main():
-    inputs, overwrite, write_dir = parse_args()
+    inputs, overwrite, write_dir, requests = parse_args()
     load_dotenv()
 
     api = ElevenLabs(
@@ -126,7 +135,7 @@ def main():
         thread_map(
             partial(process_script, client=client, write_dir=write_dir),
             dialog_scripts,
-            max_workers=5,
+            max_workers=requests,
             desc="Processing",
             unit="file",
         )
